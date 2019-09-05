@@ -2,132 +2,123 @@ from math import sqrt
 
 class Calculos():
     
-    def __init__(self):
-        pass
+    def __init__(self)
     
     def calculo_corriente(self):
 
-        if self.Sistema == 'monofásico':
-            I_nom = Carga/(Voltaje*fp)
-            I_calculada = I_nom*factor_carga
+        if self.Sistema == 'monofasico':
+            self.Inominal = self.Carga/(self.Voltaje*self.fp)
+        if self.Sistema == 'trifasico':
+            self.Inominal = self.Carga/(sqrt(3)*self.Voltaje*self.fp)
 
-        if Sistema == 'trifásico':
-            I_nom = Carga/(sqrt(3)*Voltaje*fp)
-            I_calculada = I_nom*factor_carga
+        self.I_corregida = self.Inominal*self.factor_carga
+        self.Carga_corregida = self.Carga*self.factor_carga
 
-        Carga_corregida = Carga*factor_carga
+        if self.Sistema == 'monofasico':
+            if self.misma_canalizacion == True:
+                self.conductores_canalizacion = self.numero_conductores_por_fase*int(
+                    self.misma_canalizacion) + int(self.neutro_presente)*self.numero_conductores_por_fase*int(self.misma_canalizacion)
+            if self.misma_canalizacion == False:
+                self.conductores_canalizacion = 1 + int(self.neutro_presente)
 
-        if neutro == 'si':
-            neutro = 1
-        if neutro == 'no':
-            neutro = 0
+        if self.Sistema == 'trifásico':
+            if self.misma_canalizacion == True:
+                self.conductores_canalizacion = 3*self.numero_conductores_por_fase*int(misma_canalizacion) + int(self.neutro_presente)*self.numero_conductores_por_fase*int(self.misma_canalizacion)
+            if self.misma_canalizacion == False:
+                self.conductores_canalizacion = 3 + int(self.neutro_presente)
 
-        if Sistema == 'monofásico':
-            neutro = 1
-
-            if mismo == 'si':
-                conductores_canalizacion = numero_conductores_por_fase*mismo + neutro*numero_conductores_por_fase*mismo
-            if mismo == 'no':
-                conductores_canalizacion = 1 + neutro
-
-        if Sistema == 'trifásico':
-            if mismo == 'si':
-                conductores_canalizacion = 3*numero_conductores_por_fase*mismo + neutro*numero_conductores_por_fase*mismo
-            if mismo == 'no':
-                conductores_canalizacion = 3 + neutro
-
-        if Interruptor_forzado_1 == True:
-            for x in range(len(Interruptores)):
-                if I_calculada <= Interruptores[x]:
-                    Interruptor_1 = Interruptores[x]
-                    porcentaje_Irating_1 = I_calculada*100/Interruptor_1
-                    if porcentaje_Irating_1 <= 80:
-                        if Interruptores[x-1]*0.8 >= Inom  and (x-1) >= 0:
-                            Interruptor_1 = Interruptores[x-1]
-                            porcentaje_Irating_1 = I_nom*100/Interruptor_1
+        if self.Interruptor_forzado == True:
+            for x in range(len(self.Interruptores_tabla)):
+                if self.I_corregida <= self.Interruptores_tabla[x]:
+                    self.Interruptor = self.Interruptores_tabla[x]
+                    self.porcentaje_Irating = self.I_corregida*100/self.Interruptor
+                    if porcentaje_Irating <= 80:
+                        if Interruptores_tabla[x-1]*0.8 >= Inom  and (x-1) >= 0:
+                            self.Interruptor = Interruptores_tabla[x-1]
+                            porcentaje_Irating = Inominal*100/Interruptor
                     break
             else:
-                print('!ERROR!. No se encontro interruptor 1 tan grande. Aumenta el nivel de voltaje para esa carga')
-        elif Interruptor_forzado_1 > 0:
-            if I_calculada <= Interruptor_forzado_1:
-                Interruptor_1 = Interruptor_forzado_1
-                if I_calculada <= Interruptor_forzado_1*porcentaje_Irating_1:
-                    porcentaje_Irating_1 = porcentaje_Irating_1
+                print('!ERROR!. No se encontro interruptor tan grande. Aumenta el nivel de voltaje para esa carga')
+        elif Interruptor_forzado > 0:
+            if I_corregida <= Interruptor_forzado:
+                Interruptor = Interruptor_forzado
+                if I_corregida <= Interruptor_forzado*porcentaje_Irating:
+                    porcentaje_Irating = porcentaje_Irating
                 else:
-                    porcentaje_Irating_1 = I_calculada*100/Interruptor_forzado_1
+                    porcentaje_Irating = I_corregida*100/Interruptor_forzado
             else:
                 print('!ERROR!. Amperaje del Interruptor 1 forzado menor a la I calculada. Se procedio a calcular otro interruptor 1 y otro porcentaje Irating 1')
-                for x in range(len(Interruptores)):
-                    if I_calculada <= Interruptores[x]:
-                        Interruptor_1 = Interruptores[x]
-                        porcentaje_Irating_1 = I_calculada*100/Interruptor_1
-                        if porcentaje_Irating_1 <= 80:
-                            if Interruptores[x-1]*0.8 >= Inom  and (x-1) >= 0:
-                                Interruptor_1 = Interruptores[x-1]
-                                porcentaje_Irating_1 = I_nom*100/Interruptor_1
+                for x in range(len(Interruptores_tabla)):
+                    if I_corregida <= Interruptores_tabla[x]:
+                        Interruptor = Interruptores_tabla[x]
+                        porcentaje_Irating = I_corregida*100/Interruptor
+                        if porcentaje_Irating <= 80:
+                            if Interruptores_tabla[x-1]*0.8 >= Inom  and (x-1) >= 0:
+                                Interruptor = Interruptores_tabla[x-1]
+                                porcentaje_Irating = Inominal*100/Interruptor
                         break
                 else:
                     print('!ERROR!. No se encontro interruptor 1 tan grande. Aumenta el nivel de voltaje para esa carga')
-        elif Interruptor_forzado_1 == False:
-            for x in Interruptores:
-                if I_calculada <= x:
-                    Interruptor_1 = x
-                    porcentaje_Irating_1 = I_calculada*100/Interruptor_1
+        elif Interruptor_forzado == False:
+            for x in Interruptores_tabla:
+                if I_corregida <= x:
+                    Interruptor = x
+                    porcentaje_Irating = I_corregida*100/Interruptor
                     break
-                if I_nom*(factor_carga-ajuste_factor_carga/100) <= x:
-                    Interruptor_1 = x
-                    porcentaje_Irating_1 = I_calculada*100/Interruptor_1
+                if Inominal*(factor_carga-ajuste_factor_carga/100) <= x:
+                    Interruptor = x
+                    porcentaje_Irating = I_corregida*100/Interruptor
                     break
             else:
                 print('No se encontro interruptor 1 tan grande. Aumenta el nivel de voltaje para esa carga')
         else:
             print('No corresponde a ninguna opción para interruptor 1')
 
-        if mismo_amperaje == True:
-            Interruptor_2 = Interruptor_1
-            porcentaje_Irating_2 = porcentaje_Irating_1
+        if misma_canalizacion_amperaje == True:
+            Interruptor_2 = Interruptor
+            porcentaje_Irating_2 = porcentaje_Irating
         else:
             if Interruptor_forzado_2 == True:
-                for x in range(len(Interruptores)):
-                    if I_calculada <= Interruptores[x]:
-                        Interruptor_2 = Interruptores[x]
-                        porcentaje_Irating_2 = I_calculada*100/Interruptor_2
+                for x in range(len(Interruptores_tabla)):
+                    if I_corregida <= Interruptores_tabla[x]:
+                        Interruptor_2 = Interruptores_tabla[x]
+                        porcentaje_Irating_2 = I_corregida*100/Interruptor_2
                         if porcentaje_Irating_2 <= 80:
-                            if Interruptores[x-1]*0.8 >= Inom  and (x-1) >= 0:
-                                Interruptor_2 = Interruptores[x-1]
-                                porcentaje_Irating_2 = I_nom*100/Interruptor_2
+                            if Interruptores_tabla[x-1]*0.8 >= Inom  and (x-1) >= 0:
+                                Interruptor_2 = Interruptores_tabla[x-1]
+                                porcentaje_Irating_2 = Inominal*100/Interruptor_2
                         break
                 else:
                     print('!ERROR!. No se encontro interruptor 2 tan grande. Aumenta el nivel de voltaje para esa carga')
             elif Interruptor_forzado_2 > 0:
-                if I_calculada <= Interruptor_forzado_2:
+                if I_corregida <= Interruptor_forzado_2:
                     Interruptor_2 = Interruptor_forzado_2
-                    if I_calculada <= Interruptor_forzado_2*porcentaje_Irating_2:
+                    if I_corregida <= Interruptor_forzado_2*porcentaje_Irating_2:
                         porcentaje_Irating_2 = porcentaje_Irating_2
                     else:
-                        porcentaje_Irating_2 = I_calculada*100/Interruptor_forzado_2
+                        porcentaje_Irating_2 = I_corregida*100/Interruptor_forzado_2
                 else:
                     print('!ERROR!. Amperaje del Interruptor 2 forzado menor a la I calculada. Se procedio a calcular otro interruptor 2 y otro porcentaje Irating 2')
-                    for x in range(len(Interruptores)):
-                        if I_calculada <= Interruptores[x]:
-                            Interruptor_2 = Interruptores[x]
-                            porcentaje_Irating_2 = I_calculada*100/Interruptor_2
+                    for x in range(len(Interruptores_tabla)):
+                        if I_corregida <= Interruptores_tabla[x]:
+                            Interruptor_2 = Interruptores_tabla[x]
+                            porcentaje_Irating_2 = I_corregida*100/Interruptor_2
                             if porcentaje_Irating_2 <= 80:
-                                if Interruptores[x-1]*0.8 >= Inom  and (x-1) >= 0:
-                                    Interruptor_2 = Interruptores[x-1]
-                                    porcentaje_Irating_2 = I_nom*100/Interruptor_2
+                                if Interruptores_tabla[x-1]*0.8 >= Inom  and (x-1) >= 0:
+                                    Interruptor_2 = Interruptores_tabla[x-1]
+                                    porcentaje_Irating_2 = Inominal*100/Interruptor_2
                             break
                     else:
                         print('!ERROR!. No se encontro interruptor 2 tan grande. Aumenta el nivel de voltaje para esa carga')
             elif Interruptor_forzado_2 == False:
-                for x in Interruptores:
-                    if I_calculada <= x:
+                for x in Interruptores_tabla:
+                    if I_corregida <= x:
                         Interruptor_2 = x
-                        porcentaje_Irating_2 = I_calculada*100/Interruptor_2
+                        porcentaje_Irating_2 = I_corregida*100/Interruptor_2
                         break
-                    if I_nom*(factor_carga-ajuste_factor_carga/100) <= x:
+                    if Inominal*(factor_carga-ajuste_factor_carga/100) <= x:
                         Interruptor_2 = x
-                        porcentaje_Irating_2 = I_calculada*100/Interruptor_2
+                        porcentaje_Irating_2 = I_corregida*100/Interruptor_2
                         break
                 else:
                     print('No se encontro interruptor 2 tan grande. Aumenta el nivel de voltaje para esa carga')
@@ -208,9 +199,9 @@ class Calculos():
             Ze = (resistencia_tabla[indice]*fp + reactancia_tabla[indice]*sin(acos(fp)))/1000*Longitud
 
             if Sistema == 'monofásico':
-                caida_tension_calculada = 2*Ze*I_nom*100/Voltaje/numero_conductores_por_fase
+                caida_tension_calculada = 2*Ze*Inominal*100/Voltaje/numero_conductores_por_fase
             elif Sistema == 'trifásico':
-                caida_tension_calculada = sqrt(3)*Ze*I_nom*100/Voltaje/numero_conductores_por_fase
+                caida_tension_calculada = sqrt(3)*Ze*Inominal*100/Voltaje/numero_conductores_por_fase
 
             return {'indice_caida': indice, 'calibre_caida': calibre_tabla[indice], 'Area_caida': Area, 'Ze': Ze, 'caida_tension_calculada': caida_tension_calculada}
 
@@ -228,9 +219,9 @@ class Calculos():
                 Ze = (resistencia_tabla[indice]*fp + reactancia_tabla[indice]*sin(acos(fp)))/1000
 
                 if Sistema == 'monofásico':
-                    caida_tension_calculada = 2*Ze*Longitud*I_nom*100/Voltaje/numero_conductores_por_fase
+                    caida_tension_calculada = 2*Ze*Longitud*Inominal*100/Voltaje/numero_conductores_por_fase
                 elif Sistema == 'trifásico':
-                    caida_tension_calculada = sqrt(3)*Ze*Longitud*I_nom*100/Voltaje/numero_conductores_por_fase
+                    caida_tension_calculada = sqrt(3)*Ze*Longitud*Inominal*100/Voltaje/numero_conductores_por_fase
             
                 if caida_tension_calculada <= caida_tension:
 
