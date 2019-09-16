@@ -142,6 +142,7 @@ class Calculos():
 
         while True:
             for self.indice_caida, self.Area_caida in enumerate(Area_conductor_tabla):
+                self.calibre_caida = calibres_tabla[self.indice_caida]
                 if self.indice_caida >= 20:
                     print('caída de tensión')
                     print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
@@ -152,16 +153,16 @@ class Calculos():
                 self.Ze = (resistencia_tabla[self.indice_caida]*self.fp + reactancia_tabla[self.indice_caida]*sin(acos(self.fp)))/1000
 
                 if self.Sistema == 'monofasico':
-                    self.caida_tension_calculada = 2*self.Ze*self.Longitud*self.I_nominal*100/self.Voltaje/self.numero_conductores_por_fase
+                    self.caida_tension_calculada = 2*self.Ze*self.Longitud*self.Inominal*100/self.Voltaje/self.numero_conductores_por_fase
                 elif self.Sistema == 'trifasico':
-                    self.caida_tension_calculada = sqrt(3)*self.Ze*self.Longitud*self.I_nominal*100/self.Voltaje/self.numero_conductores_por_fase
+                    self.caida_tension_calculada = sqrt(3)*self.Ze*self.Longitud*self.Inominal*100/self.Voltaje/self.numero_conductores_por_fase
             
                 if self.caida_tension_calculada <= self.caida_tension:
 
                     if self.Area_caida < 53 and self.numero_conductores_por_fase > 1:
                         print('caída de tensión')
                         print('!ERROR. Tamaño de conductor menor a 1/0. No se puede poner ese tamaño de conductor en paralelo.')
-                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibres_tabla[self.indice]}')
+                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibres_tabla[self.indice_caida]}')
                         print('')
                     else:
                         return self.indice_caida, self.calibre_caida, self.Area_caida, self.caida_tension_calculada

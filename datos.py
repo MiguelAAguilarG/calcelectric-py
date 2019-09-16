@@ -3,7 +3,7 @@ from math import sqrt, pi
 datos_entrada_dict = {
 'Sistema': 'trifasico',
 'Voltaje': 100,
-'Carga': 100,
+'Carga': 10000,
 'factor_carga': 1,
 'fp': 1.0,
 'caida_tension': 3,
