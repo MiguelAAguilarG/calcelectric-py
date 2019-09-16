@@ -23,7 +23,24 @@ class Tablas():
     #############################################
     Ampacidad_tabla_310_15_b16['datos']['material_conductor']['aluminio']['Taislante'][60] = (0, 0, 0, 0, 40, 55, 65, 75, 85, 100, 115, 130, 150, 170, 195, 210, 225, 260, 285, 315, 320, 330, 355, 375, 405, 435, 455, 470)
     Ampacidad_tabla_310_15_b16['datos']['material_conductor']['aluminio']['Taislante'][75] = (0, 0, 0, 0, 50, 65, 75, 90, 100, 120, 135, 155, 180, 205, 230, 250, 270, 310, 340, 375, 385, 395, 425, 445, 485, 520, 545, 560)
-    Ampacidad_tabla_310_15_b16['datos']['material_conductor']['aluminio']['Taislante'][90] = (0, 0, 0, 0, 55, 75, 85, 100, 115, 135, 150, 175, 205, 230, 260, 280, 305, 350, 385, 425, 435, 445, 480, 500, 545, 585, 615, 630)	
+    Ampacidad_tabla_310_15_b16['datos']['material_conductor']['aluminio']['Taislante'][90] = (0, 0, 0, 0, 55, 75, 85, 100, 115, 135, 150, 175, 205, 230, 260, 280, 305, 350, 385, 425, 435, 445, 480, 500, 545, 585, 615, 630)
+
+    Ampacidad_tabla_310_15_b17 = {}
+    Ampacidad_tabla_310_15_b17['parametros'] = {'Tambiente': 30, 'maximo_numero_conductores_portadores_corriente': 1, 'Voltaje_maximo': 2000, 'material_conductor': ('cobre', 'aluminio'), 'Taislante': (60, 75 ,90), 'unidad': 'Ampere'}
+    #############################################
+    Ampacidad_tabla_310_15_b17['datos'] = {}
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor'] = {'cobre' : {}, 'aluminio': {}}
+    #############################################
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['cobre'] = {'Taislante': {60: (), 75: (), 90: ()}}
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['cobre']['Taislante'][60] = (25, 30, 40, 60, 80, 105, 120, 140, 165, 195, 225, 260, 300, 340, 375, 420, 455, 515, 575, 630, 655, 680, 730, 780, 890, 980, 1070, 1155)
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['cobre']['Taislante'][75] = (30, 35, 50, 70, 95, 125, 145, 170, 195, 230, 265, 310, 360, 405, 445, 505, 545, 620, 690, 755, 785, 815, 870, 935, 1065, 1175, 1280, 1385)
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['cobre']['Taislante'][90] = (35, 40, 55, 80, 105, 140, 165, 190, 220, 260, 300, 350, 405, 455, 500, 570, 615, 700, 780, 850, 885, 920, 980, 1055, 1200, 1325, 1445, 1560)
+    #############################################
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['aluminio'] = {'Taislante': {60: (), 75: (), 90: ()}}
+    #############################################
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['aluminio']['Taislante'][60] = (0, 0, 0, 0, 60, 80, 95, 110, 130,150, 175, 200, 235, 265, 290, 330, 355, 405, 455, 500, 515, 535, 580, 625, 710, 795, 875, 960)
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['aluminio']['Taislante'][75] = (0, 0, 0, 0, 75, 100, 115, 135, 155, 180, 210, 240, 280, 315, 350, 395, 425, 485, 545, 595, 620, 645, 700, 750, 855, 950, 1050, 1150)
+    Ampacidad_tabla_310_15_b17['datos']['material_conductor']['aluminio']['Taislante'][90] = (0, 0, 0, 0, 85, 115, 130, 150, 175, 205, 235, 270, 315, 355, 395, 445, 480, 545, 615, 670, 700, 725, 790, 845, 965, 1070, 1185, 1295)
 
     impedancia_tabla_9 = {}
     impedancia_tabla_9['parametros'] = {'Tambiente': 75, 'maximo_numero_conductores_portadores_corriente': 3, 'Voltaje_maximo': 600, 'material_conductor': ('cobre', 'aluminio'), 'canalizacion': 'conduit', 'material_canalizacion': ('pvc', 'aluminio', 'acero'), 'f': 60, 'unidad': 'ohm/km'}
