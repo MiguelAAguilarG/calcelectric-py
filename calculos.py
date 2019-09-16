@@ -12,6 +12,11 @@ class Calculos():
             'factor_ampacidad_cable': 1.25,
             'factor_error_Interruptor': 0.01
             }
+            self.datos_por_defecto_Calculos_descripcion_dict = {
+            'factor_utilizacion_interruptor': 'Corriente de uso recomendable/Corriente nominal (>0-1) NOTA: Como regla general es del 80%',
+            'factor_ampacidad_cable': 'Factor propuesto en la NOM-001-SEDE (1.25) antes de aplicar cualquier factor de correción y calculo debido al factor_utilizacion_interruptor para que no haya sobrecarga en las terminales del interruptor',
+            'factor_error_Interruptor': 'Factor para elegir interruptor y se pueda elegir uno de menor tamaño como lo indica en algunas partes de la NOM-001-SEDE (>0-valor pequeño)'
+            }
 
         self.datos_por_defecto_Calculos = self.datos_por_defecto_Calculos_dict
 
@@ -82,9 +87,9 @@ class Calculos():
                     self.porcentaje_utilizacion_Interruptor = self.Inominal*100/self.Interruptor
             else:
                 print('!ERROR!. Amperaje del Interruptor forzado menor a la Icorregida. Se procedio a calcular otro interruptor y porcentaje_utilizacion_Interruptor')
-                calculo_Interruptorparte_iterativa()
+                calculo_Interruptor_parte_iterativa()
         
-        return self.Interruptor
+        return self.Interruptor, self.porcentaje_utilizacion_Interruptor
 
     def calculo_factor_temperatura(self, tabla_factor_temperatura):
 
@@ -189,3 +194,80 @@ class Calculos():
                     Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(self.calibre_tierra_fisica)]
             
                 return self.calibre_tierra_fisica, self.Area_tierra_fisica
+'''
+for n=1:length(calibre_tabla)
+  if cell2mat(tierra) == cell2mat(calibre_tabla(n))
+  aux_3 = n;
+  
+  if canalizacion == 2 && aux_3 <=5
+  disp('NOTA. Tierra fisica forzada a calibre 4 por estar en charola');
+  aux_3 = 6;  
+  end
+  
+  break
+  end
+end
+Area_cable = conductores_canalizacion*Area_cable_tablas(aux_2)+Area_cable_tablas(aux_3);
+%///////////////////////////////////////////////////////////////////////////////
+%///////////////////////////////////////////////////////////////////////////////
+ancho_charola_tablas = [50 100 150 200 225 300 400 450 500 600 750 900];
+charola_columna1 = [1400 2800 4200 5600 6100 8400 11200 12600 14000 16800 21000 25200];
+if canalizacion == 2
+  
+if Sistema == 1
+  suma_diametros = 1*numero_conductores*Diametro_cable_tablas(aux_2) + neutro*numero_conductores*Diametro_cable_tablas(aux_2) + Diametro_cable_tablas(aux_3);
+  suma_area = 1*numero_conductores*Area_cable_tablas(aux_2) + neutro*numero_conductores*Area_cable_tablas(aux_2) + Area_cable_tablas(aux_3);
+elseif Sistema == 3
+  suma_diametros = 3*numero_conductores*Diametro_cable_tablas(aux_2) + neutro*numero_conductores*Diametro_cable_tablas(aux_2) + Diametro_cable_tablas(aux_3);
+  suma_area = 3*numero_conductores*Area_cable_tablas(aux_2) + neutro*numero_conductores*Area_cable_tablas(aux_2) + Area_cable_tablas(aux_3);
+end
+
+%///////////////////////////////////////////////////////////////////////////////
+  if aux_2 >= 24 && aux_3 >= 24
+    condicion = 'a';
+    for n=1:length(ancho_charola)
+      if suma_diametros <= ancho_charola_tablas(n)
+        ancho_charola = ancho_charola_tablas(n);
+        break
+      end
+    end
+%///////////////////////////////////////////////////////////////////////////////
+  elseif (aux_2 >= 14 && aux_2 <= 23) && (aux_3 >= 14 && aux_3 <= 23)
+    condicion = 'b';
+    for n=1:length(ancho_charola_tablas)
+      if suma_area <= charola_columna1(n)
+        ancho_charola = ancho_charola_tablas(n);
+        break
+      end
+    end
+%///////////////////////////////////////////////////////////////////////////////
+  elseif aux_2 >= 24 && aux_3 < 24
+    condicion = 'c';
+    Sd = Diametro_cable_tablas(aux_2)*conductores_canalizacion;
+    charola_columna2 = charola_columna1 - 28*Sd;
+    for n=1:length(ancho_charola_tablas)
+      if suma_area <= charola_columna2(n)
+        ancho_charola = ancho_charola_tablas(n);
+        break
+      end
+    end
+%///////////////////////////////////////////////////////////////////////////////
+  elseif (aux_2 >= 6 && aux_2 <= 13) || (aux_3 >= 6 && aux_3 <= 13)
+    condicion = 'd';
+    for n=1:length(ancho_charola_tablas)
+      if suma_diametros <= ancho_charola_tablas(n)
+        ancho_charola = ancho_charola_tablas(n);
+        break
+      end
+    end
+  else
+    disp('Error. Diametro de conductor activo menor a calibre 4');
+  end
+%///////////////////////////////////////////////////////////////////////////////
+    if suma_diametros ~=0
+      suma_area = 0;
+    elseif suma_area ~= 0
+      suma_diametros =0
+    end
+end
+'''

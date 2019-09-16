@@ -1,3 +1,4 @@
+import datos
 import calculos
 import tablas
 
@@ -11,7 +12,6 @@ class Carga(calculos.Calculos):
         self.Sistema = self.datos_entrada['Sistema']
         self.Voltaje = self.datos_entrada['Voltaje']
         self.Carga = self.datos_entrada['Carga']
-        self.factor_carga = self.datos_entrada['factor_carga']
         self.fp =self.datos_entrada['fp']
         self.caida_tension = self.datos_entrada['caida_tension']
         self.Longitud = self.datos_entrada['Longitud']
@@ -22,7 +22,6 @@ class Carga(calculos.Calculos):
         self.material_conductor = self.datos_entrada['material_conductor']
         self.numero_conductores_por_fase = self.datos_entrada['numero_conductores_por_fase']
         self.misma_canalizacion = self.datos_entrada['misma_canalizacion']
-        self.porcentaje_utilizacion_Interruptor = self.datos_entrada['porcentaje_utilizacion_Interruptor']
         self.Interruptor_forzado = self.datos_entrada['Interruptor_forzado']
         self.canalizacion = self.datos_entrada['canalizacion']
         self.material_canalizacion = self.datos_entrada['material_canalizacion']
@@ -51,13 +50,14 @@ class Carga(calculos.Calculos):
 
         self.calculo_cable_caida_de_tension(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_caida_resistencia_adecuada_lista, self.tabla_caida_reactancia_adecuada_lista)
 
-        datos_salida_dict = {
+        self.datos_salida_dict = {
         'Inominal': self.Inominal,
         'Icorregida_factor_ampacidad_cable': self.Icorregida_factor_ampacidad_cable,
         'Carga_corregida_factor_utilizacion_carga': self.Carga_corregida_factor_utilizacion_carga,
         'Carga_corregida_factor_simultaneidad_carga': self.Carga_corregida_factor_simultaneidad_carga,
         'conductores_canalizacion': self.conductores_canalizacion,
         'Interruptor': self.Interruptor,
+        'porcentaje_utilizacion_Interruptor': self.porcentaje_utilizacion_Interruptor,
         'factor_temperatura': self.factor_temperatura,
         'factor_agrupamiento': self.factor_agrupamiento,
         'indice_ampacidad': self.indice_ampacidad,
@@ -71,7 +71,7 @@ class Carga(calculos.Calculos):
         'caida_tension_calculada': self.caida_tension_calculada,
         }
 
-        print(datos_salida_dict)
-
-        
+        print(self.datos_por_defecto_Calculos_dict)
+        print(self.datos_entrada)
+        print(self.datos_salida_dict)
 
