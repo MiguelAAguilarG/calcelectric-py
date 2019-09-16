@@ -116,42 +116,5 @@ class Tablas():
     def __init__(self):
         pass
 
-    def buscar_variable_adecuada(self, lista_a_evaluar_datos):
-        import gc
-
-        lista_objetos = gc.get_referents(Tablas)
-        diccionario = lista_objetos[0]
-
-        for elemento in diccionario:
-            if isinstance(diccionario[elemento], dict):
-                if 'parametros' in diccionario[elemento]:
-                    cont = 0
-                    for objeto_key, objeto_value in diccionario[elemento]['parametros'].items():
-                            for a_evaluar_key, a_evaluar_value in lista_a_evaluar_datos.items():
-                                if a_evaluar_key == objeto_key:
-                                    flag = False
-                                    if isinstance(objeto_value, tuple):
-                                        if a_evaluar_value in objeto_value:
-                                            flag = True
-                                    elif a_evaluar_value == objeto_value:
-                                        flag = True
-
-                                    if flag == True:
-                                        cont = cont + 1
-                                        if len(lista_a_evaluar_datos) == cont:
-                                            return diccionario[elemento]
-
-    def buscar_tupla_adecuada(self, lista_objetos, lista_a_evaluar_datos):
-        #Tengo que meter la variable adecuada
-        for objeto in lista_objetos:
-            for a_evaluar in lista_a_evaluar_datos:
-                if a_evaluar == objeto:
-                    if not isinstance(lista_objetos[objeto], dict):
-                        return lista_objetos[objeto]
-                    else:
-                        return self.buscar_tupla_adecuada(lista_objetos[objeto], lista_a_evaluar_datos)
-
-if __name__ == "__main__":
-
 
         

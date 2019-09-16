@@ -39,35 +39,17 @@ class Carga(calculos.Calculos):
         self.calculo_conductores_canalizacion()
         self.calculo_Interruptor()
 
-        self.datos_a_buscar_para_tabla_ampacidad_lista = ['datos', 'material_conductor', self.material_conductor, 'Taislante',  self.Taislante]
-        self.datos_a_buscar_para_parte_adecuada_de_tabla_ampacidad_dict = {
-        'Tambiente': self.Tambiente,
-        'Taislante': self.Taislante,
-        'material_conductor': self.material_conductor}
-
-        import tablas
-        t = tablas.Tablas()
-
-        self.tabla_ampacidad_dict = t.buscar_variable_adecuada(self.datos_a_buscar_para_parte_adecuada_de_tabla_ampacidad_dict)
-
-        self.parte_adecuada_tabla_ampacidad_dict = t.buscar_tupla_adecuada(self.tabla_ampacidad_dict, self.datos_a_buscar_para_tabla_ampacidad_lista)
+        self.tabla_ampacidad_dict = tablas.Tablas.Ampacidad_tabla_310_15_b16
+        self.parte_adecuada_tabla_ampacidad_dict = tablas.Tablas.Ampacidad_tabla_310_15_b16['datos']['material_conductor'][self.material_conductor]['Taislante'][self.Taislante]
 
         self.calculo_factor_temperatura(self.tabla_ampacidad_dict)
         self.calculo_factor_agrupamiento(tablas.Tablas.factor_agrupamiento_tabla)
         self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_ampacidad_dict)
 
-        self.datos_a_buscar_para_tabla_caida_lista = ['datos', 'material_conductor', self.material_conductor, 'Taislante',  self.Taislante]
-        self.datos_a_buscar_para_parte_adecuada_de_tabla_caida_dict = {
-        'Tambiente': self.Tambiente,
-        'Taislante': self.Taislante,
-        'material_conductor': self.material_conductor}
+        self.tabla_caida_resistencia_adecuada_lista = tabla.Tabla.impedancia_tabla_9['datos']['resistencia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]
+        self.tabla_caida_resistencia_adecuada_lista = tabla.Tabla.impedancia_tabla_9['datos']['reactancia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]
 
-        self.tabla_caida_dict = t.buscar_variable_adecuada(self.datos_a_buscar_para_parte_adecuada_de_tabla_caida_dict)
-
-        self.parte_adecuada_tabla_caida_dict = t.buscar_tupla_adecuada(self.tabla_caida_dict, self.datos_a_buscar_para_tabla_caida_lista)
-
-        self.calculo_cable_caida_de_tension(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, tabla_de_impedancias)
-        self.calculo_cable_tierra_fisica(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, tablas.Tablas.calibre_tierra_fisica_tabla_250_122, tierra_fisica_tabla)
+        self.calculo_cable_caida_de_tension(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_caida_resistencia_adecuada_lista, self.tabla_caida_reactancia_adecuada_lista)
 
         datos_salida_dict = {
         'Inominal': self.Inominal,
@@ -82,7 +64,11 @@ class Carga(calculos.Calculos):
         'calibre_ampacidad': self.calibre_ampacidad, 
         'Area_ampacidad': self.Area_ampacidad, 
         'Ampacidad': self.Ampacidad, 
-        'Ampacidad_corregida': self.Ampacidad_corregida
+        'Ampacidad_corregida': self.Ampacidad_corregida,
+        'indice_caida': self.indice_caida,
+        'calibre_caida': self.calibre_caida,
+        'Area_caida': self.Area_caida,
+        'caida_tension_calculada': self.caida_tension_calculada,
         }
 
         print(datos_salida_dict)

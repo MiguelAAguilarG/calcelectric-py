@@ -138,10 +138,7 @@ class Calculos():
 
                 return None
 
-    def calculo_cable_caida_de_tension(self, calibres_tabla, Area_conductor_tabla, tabla_de_impedancias):
-
-        resistencia_tabla = tabla_de_impedancias['resistencia'][material_conductor][material_canalizacion]
-        reactancia_tabla = tabla_de_impedancias['reactancia'][material_conductor][material_canalizacion]
+    def calculo_cable_caida_de_tension(self, calibres_tabla, Area_conductor_tabla, resistencia_tabla, reactancia_tabla):
 
         while True:
             for self.indice_caida, self.Area_caida in enumerate(Area_conductor_tabla):
