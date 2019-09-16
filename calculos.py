@@ -137,22 +137,22 @@ class Calculos():
                 print('')
 
                 return None
-'''
-    def calculo_cable_caida_de_tension(self, tabla_de_impedancias, calibres_tabla, Area_conductor_tabla):
+
+    def calculo_cable_caida_de_tension(self, calibres_tabla, Area_conductor_tabla, tabla_de_impedancias):
 
         resistencia_tabla = tabla_de_impedancias['resistencia'][material_conductor][material_canalizacion]
         reactancia_tabla = tabla_de_impedancias['reactancia'][material_conductor][material_canalizacion]
 
         while True:
-            for self.indice, self.Area in enumerate(Area_conductor_tabla):
-                if self.indice >= 20:
+            for self.indice_caida, self.Area_caida in enumerate(Area_conductor_tabla):
+                if self.indice_caida >= 20:
                     print('caída de tensión')
                     print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
                     print('Se recomienda aumentar numero de conductores por fase')
 
                     return
 
-                self.Ze = (resistencia_tabla[self.indice]*self.fp + reactancia_tabla[indice]*sin(acos(self.fp)))/1000
+                self.Ze = (resistencia_tabla[self.indice_caida]*self.fp + reactancia_tabla[self.indice_caida]*sin(acos(self.fp)))/1000
 
                 if self.Sistema == 'monofasico':
                     self.caida_tension_calculada = 2*self.Ze*self.Longitud*self.I_nominal*100/self.Voltaje/self.numero_conductores_por_fase
@@ -161,34 +161,33 @@ class Calculos():
             
                 if self.caida_tension_calculada <= self.caida_tension:
 
-                    if self.Area < 53 and self.numero_conductores_por_fase > 1:
+                    if self.Area_caida < 53 and self.numero_conductores_por_fase > 1:
                         print('caída de tensión')
                         print('!ERROR. Tamaño de conductor menor a 1/0. No se puede poner ese tamaño de conductor en paralelo.')
                         print(f'Conductor elegido por ampacidad menor a 1/0: {calibres_tabla[self.indice]}')
                         print('')
                     else:
-                        return self.indice, {'calibre_caida': calibres_tabla[indice], 'Area_caida': Area, 'Ze': Ze, 'caida_tension_calculada': caida_tension_calculada}
+                        return self.indice_caida, self.calibre_caida, self.Area_caida, self.caida_tension_calculada
             else:
                 print('caída de tensión')
                 print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
                 print('Se recomienda aumentar numero de conductores por fase')
 
-    def calculo_cable_tierra_fisica(self, interruptor_tierra_fisica_tabla, tierra_fisica_tabla, calibres_tabla, Area_tierra_tabla):
+    def calculo_cable_tierra_fisica(self, calibres_tabla, Area_tierra_tabla, interruptor_tierra_fisica_tabla, tierra_fisica_tabla):
 
-        for indice_tierra_fisica, interruptor_tierra_fisica in enumerate(interruptor_tierra_fisica_tabla):
-            if Interruptor <= interruptor_tierra_fisica:
-                calibre_tierra_fisica = tierra_fisica_tabla[material_conductor_tierra][indice_tierra_fisica]
-                Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
+        for self.indice_tierra_fisica, self.interruptor_tierra_fisica in enumerate(interruptor_tierra_fisica_tabla):
+            if self.Interruptor <= self.interruptor_tierra_fisica:
+                self.calibre_tierra_fisica = tierra_fisica_tabla[material_conductor_tierra][indice_tierra_fisica]
+                self.Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
 
-                if Area_tierra_fisica < 21.2 and canalizacion == 'charola':
+                if self.Area_tierra_fisica < 21.2 and self.canalizacion == 'charola':
                     print('Tierra física')
                     print('Tamaño de conductor menor a 4. No se puede poner ese tamaño de conductor en una charola.')
-                    print(f'Conductor de tierra fisica elegido: {calibre_tierra_fisica}')
-                    print(f'Material de tierra fisica: {material_conductor_tierra}')
+                    print(f'Conductor de tierra fisica elegido: {self.calibre_tierra_fisica}')
+                    print(f'Material de tierra fisica: {self.material_conductor_tierra}')
                     print('')
 
                     tierra = '4'
-                    Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
+                    Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(self.calibre_tierra_fisica)]
             
-                return {'calibre_tierra_fisica': calibre_tierra_fisica, 'Area_tierra_fisica': Area_tierra_fisica}  
-'''
+                return self.calibre_tierra_fisica, self.Area_tierra_fisica

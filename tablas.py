@@ -153,17 +153,5 @@ class Tablas():
 
 if __name__ == "__main__":
 
-    a_evaluar_parametros = {
-    'Tambiente': 30,
-    'Taislante': 75,
-    'material_conductor': 'cobre'}
-
-    lista_a_evaluar_datos = ['datos', 'material_conductor', 'cobre', 'Taislante', 60]
-
-    t = Tablas()
-
-    yo = t.buscar_variable_adecuada(a_evaluar_parametros)
-    t.buscar_tupla_adecuada(yo, lista_a_evaluar_datos)
-
 
         

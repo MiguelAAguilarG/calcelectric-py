@@ -39,11 +39,11 @@ class Carga(calculos.Calculos):
         self.calculo_conductores_canalizacion()
         self.calculo_Interruptor()
 
-        self.datos_a_buscar_para_tabla_ampacidad_lista = ['datos', 'material_conductor', 'cobre', 'Taislante', 60]
+        self.datos_a_buscar_para_tabla_ampacidad_lista = ['datos', 'material_conductor', self.material_conductor, 'Taislante',  self.Taislante]
         self.datos_a_buscar_para_parte_adecuada_de_tabla_ampacidad_dict = {
-        'Tambiente': 30,
-        'Taislante': 75,
-        'material_conductor': 'cobre'}
+        'Tambiente': self.Tambiente,
+        'Taislante': self.Taislante,
+        'material_conductor': self.material_conductor}
 
         import tablas
         t = tablas.Tablas()
@@ -55,6 +55,19 @@ class Carga(calculos.Calculos):
         self.calculo_factor_temperatura(self.tabla_ampacidad_dict)
         self.calculo_factor_agrupamiento(tablas.Tablas.factor_agrupamiento_tabla)
         self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_ampacidad_dict)
+
+        self.datos_a_buscar_para_tabla_caida_lista = ['datos', 'material_conductor', self.material_conductor, 'Taislante',  self.Taislante]
+        self.datos_a_buscar_para_parte_adecuada_de_tabla_caida_dict = {
+        'Tambiente': self.Tambiente,
+        'Taislante': self.Taislante,
+        'material_conductor': self.material_conductor}
+
+        self.tabla_caida_dict = t.buscar_variable_adecuada(self.datos_a_buscar_para_parte_adecuada_de_tabla_caida_dict)
+
+        self.parte_adecuada_tabla_caida_dict = t.buscar_tupla_adecuada(self.tabla_caida_dict, self.datos_a_buscar_para_tabla_caida_lista)
+
+        self.calculo_cable_caida_de_tension(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, tabla_de_impedancias)
+        self.calculo_cable_tierra_fisica(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, tablas.Tablas.calibre_tierra_fisica_tabla_250_122, tierra_fisica_tabla)
 
         datos_salida_dict = {
         'Inominal': self.Inominal,
@@ -69,7 +82,8 @@ class Carga(calculos.Calculos):
         'calibre_ampacidad': self.calibre_ampacidad, 
         'Area_ampacidad': self.Area_ampacidad, 
         'Ampacidad': self.Ampacidad, 
-        'Ampacidad_corregida': self.Ampacidad_corregida}
+        'Ampacidad_corregida': self.Ampacidad_corregida
+        }
 
         print(datos_salida_dict)
 
