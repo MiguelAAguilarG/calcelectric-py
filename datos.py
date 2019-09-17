@@ -6,7 +6,7 @@ datos_entrada_dict = {
 'Carga': 10000,
 'fp': 1.0,
 'caida_tension': 3,
-'Longitud': 100,
+'Longitud': 10,
 'Tambiente': 40,
 'aislante_conductor': 'THHW',
 'Taislante': 90,

@@ -194,7 +194,7 @@ class Calculos():
                 self.calibre_tierra_fisica = tierra_fisica_tabla[self.indice_tierra_fisica]
                 self.Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(self.calibre_tierra_fisica)]
 
-                if self.Area_tierra_fisica < 21.2 and self.canalizacion == 'charola':
+                if self.Area_tierra_fisica < 21.2 and self.canalizacion == 'charola' and self.Area_caida <= self.Area_ampacidad:
                     print('Tierra física')
                     print('Tamaño de conductor menor a 4. No se puede poner ese tamaño de conductor en una charola.')
                     print(f'Conductor de tierra fisica elegido: {self.calibre_tierra_fisica}')
@@ -204,6 +204,21 @@ class Calculos():
                     self.Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(self.calibre_tierra_fisica)]
             
                 return self.calibre_tierra_fisica, self.Area_tierra_fisica
+
+    def calculo_cable_tierra_fisica_corregida(self, calibres_tabla, Area_conductor_tabla):
+
+        self.factor_correccion_cable_tierra_fisica = self.Area_caida/self.Area_ampacidad
+        self.Area_tierra_fisica_corregida_ideal = self.Area_tierra_fisica*self.factor_correccion_cable_tierra_fisica
+
+        while True:
+            for self.indice_tierra_fisica_corregida, self.Area_tierra_fisica_corregida in enumerate(Area_conductor_tabla):
+                if self.Area_tierra_fisica_corregida >= self.Area_tierra_fisica_corregida_ideal:
+                    self.calibre_tierra_fisica_corregida = calibres_tabla[self.indice_tierra_fisica_corregida]
+
+                    return self.factor_correccion_cable_tierra_fisica, self.Area_tierra_fisica_corregida_ideal, self.indice_tierra_fisica_corregida, self.calibre_tierra_fisica_corregida, self.Area_tierra_fisica_corregida  
+
+    
+
 '''
 for n=1:length(calibre_tabla)
   if cell2mat(tierra) == cell2mat(calibre_tabla(n))

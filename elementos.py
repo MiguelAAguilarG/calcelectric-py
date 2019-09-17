@@ -58,6 +58,7 @@ class Carga(calculos.Calculos):
         self.tabla_tierra_fisica_adecuada_lista = tablas.Tablas.calibre_tierra_fisica_tabla_250_122['datos']['material_conductor'][self.material_conductor]
 
         self.calculo_cable_tierra_fisica(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_interruptor_tierra_fisica_adecuada_lista, self.tabla_tierra_fisica_adecuada_lista)
+        self.calculo_cable_tierra_fisica_corregida(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla)
 
         self.datos_salida_dict = {
         'Inominal': self.Inominal,
@@ -69,17 +70,19 @@ class Carga(calculos.Calculos):
         'porcentaje_utilizacion_Interruptor': self.porcentaje_utilizacion_Interruptor,
         'factor_temperatura': self.factor_temperatura,
         'factor_agrupamiento': self.factor_agrupamiento,
-        'indice_ampacidad': self.indice_ampacidad,
         'calibre_ampacidad': self.calibre_ampacidad, 
         'Area_ampacidad': self.Area_ampacidad, 
         'Ampacidad': self.Ampacidad, 
         'Ampacidad_corregida': self.Ampacidad_corregida,
-        'indice_caida': self.indice_caida,
         'calibre_caida': self.calibre_caida,
         'Area_caida': self.Area_caida,
         'caida_tension_calculada': self.caida_tension_calculada,
         'calibre_tierra_fisica': self.calibre_tierra_fisica, 
-        'Area_tierra_fisica': self.Area_tierra_fisica
+        'Area_tierra_fisica': self.Area_tierra_fisica,
+        'factor_correccion_cable_tierra_fisica': self.factor_correccion_cable_tierra_fisica,
+        'Area_tierra_fisica_corregida_ideal': self.Area_tierra_fisica_corregida_ideal,
+        'calibre_tierra_fisica_corregida': self.calibre_tierra_fisica_corregida,
+        'Area_tierra_fisica_corregida': self.Area_tierra_fisica_corregida,
         }
 
         print(self.datos_por_defecto_Calculos_dict)
