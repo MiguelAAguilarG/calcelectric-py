@@ -53,13 +53,14 @@ class Carga(calculos.Calculos):
         self.Interruptor, self.porcentaje_utilizacion_Interruptor = self.calculo_Interruptor(self.Inominal, self.Interruptor_forzado, self.factor_utilizacion_interruptor, tablas.Tablas.Interruptores_tabla)
         ####################
         self.tabla_ampacidad_dict = tablas.Tablas.Ampacidad_tabla_310_15_b16
-        self.parte_adecuada_tabla_ampacidad_dict = tablas.Tablas.Ampacidad_tabla_310_15_b16['datos']['material_conductor'][self.material_conductor]['Taislante']
+        self.parte_adecuada_tabla_ampacidad_dict = self.tabla_ampacidad_dict['datos']['material_conductor'][self.material_conductor]['Taislante']
+        self.Tambiente_tabla_factor_temperatura = self.tabla_ampacidad_dict['parametros']['Tambiente']
         ####################
-        self.factor_temperatura = self.calculo_factor_temperatura(self.tabla_ampacidad_dict, self.Taislante, self.Tambiente)
+        self.factor_temperatura = self.calculo_factor_temperatura(self.Tambiente_tabla_factor_temperatura, self.Taislante, self.Tambiente)
 
         self.factor_agrupamiento = self.calculo_factor_agrupamiento(tablas.Tablas.factor_agrupamiento_tabla, self.Longitud, self.conductores_activos_canalizacion)
 
-        self.indice_ampacidad, self.calibre_ampacidad, self.Area_ampacidad, self.Ampacidad, self.Ampacidad_corregida = self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.parte_adecuada_tabla_ampacidad_dict, self.Taislante, self.Tterminales, self.factor_agrupamiento, self.factor_temperatura, self.Interruptor, self.numero_conductores_por_fase)
+        self.indice_ampacidad, self.calibre_ampacidad, self.Area_ampacidad, self.Ampacidad, self.Ampacidad_corregida = self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.parte_adecuada_tabla_ampacidad_dict, self.Taislante, self.Tterminales, self.factor_agrupamiento, self.factor_temperatura, self.Interruptor, self.numero_conductores_por_fase,self.Tambiente_tabla_factor_temperatura, self.Tambiente)
         ####################
         self.tabla_caida_resistencia_adecuada_lista = tablas.Tablas.impedancia_tabla_9['datos']['resistencia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]
         self.tabla_caida_reactancia_adecuada_lista = tablas.Tablas.impedancia_tabla_9['datos']['reactancia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]

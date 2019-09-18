@@ -93,9 +93,7 @@ class Calculos():
         
         return Interruptor, porcentaje_utilizacion_Interruptor
 
-    def calculo_factor_temperatura(self, tabla_factor_temperatura, Taislante, Tambiente):
-
-        Tambiente_tabla_factor_temperatura = tabla_factor_temperatura['parametros']['Tambiente']
+    def calculo_factor_temperatura(self, Tambiente_tabla_factor_temperatura, Taislante, Tambiente):
 
         factor_temperatura = sqrt((Taislante - Tambiente)/(Taislante - Tambiente_tabla_factor_temperatura))
 
@@ -116,7 +114,7 @@ class Calculos():
 
         return factor_agrupamiento
 
-    def calculo_cable_ampacidad(self, calibres_tabla, Area_conductor_tabla, parte_adecuada_tabla_ampacidad_dict, Taislante, Tterminales, factor_agrupamiento, factor_temperatura, Interruptor, numero_conductores_por_fase):
+    def calculo_cable_ampacidad(self, calibres_tabla, Area_conductor_tabla, parte_adecuada_tabla_ampacidad_dict, Taislante, Tterminales, factor_agrupamiento, factor_temperatura, Interruptor, numero_conductores_por_fase, Tambiente_tabla_factor_temperatura, Tambiente):
 
         Ampacidad_tabla_Taislante = parte_adecuada_tabla_ampacidad_dict[Taislante]
         Ampacidad_tabla_Tterminales = parte_adecuada_tabla_ampacidad_dict[Tterminales]
@@ -143,13 +141,7 @@ class Calculos():
                             Ampacidad = Ampacidad_corregida
                             Ampacidad_corregida = Ampacidad_tabla_Tterminales[indice]
 
-                    if Area_ampacidad < 53 and numero_conductores_por_fase > 1:
-                        print('Ampacidad')
-                        print('!ERROR. Tamano de conductor menor a 1/0. No se puede poner ese tamaño de conductor en paralelo.')
-                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibre_ampacidad}')
-                        print('')
-                    else:
-                        return indice_ampacidad, calibre_ampacidad, Area_ampacidad, Ampacidad, Ampacidad_corregida
+                    return indice_ampacidad, calibre_ampacidad, Area_ampacidad, Ampacidad, Ampacidad_corregida
             else:
                 print('Ampacidad')
                 print('!ERROR. Tamano de conductor demasiado grande. Fuera de rango de las tablas.')
@@ -178,14 +170,7 @@ class Calculos():
                     caida_tension_calculada = sqrt(3)*Ze*Longitud*Inominal*100/Voltaje/numero_conductores_por_fase
             
                 if caida_tension_calculada <= caida_tension:
-
-                    if Area_caida < 53 and numero_conductores_por_fase > 1:
-                        print('caída de tensión')
-                        print('!ERROR. Tamaño de conductor menor a 1/0. No se puede poner ese tamaño de conductor en paralelo.')
-                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibres_tabla[indice_caida]}')
-                        print('')
-                    else:
-                        return indice_caida, calibre_caida, Area_caida, caida_tension_calculada
+                    return indice_caida, calibre_caida, Area_caida, caida_tension_calculada
             else:
                 print('caída de tensión')
                 print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
@@ -197,15 +182,6 @@ class Calculos():
             if Interruptor <= interruptor_tierra_fisica:
                 calibre_tierra_fisica = tierra_fisica_tabla[indice_tierra_fisica]
                 Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
-
-                if Area_tierra_fisica < 21.2 and canalizacion == 'charola' and Area_caida <= Area_ampacidad:
-                    print('Tierra física')
-                    print('Tamaño de conductor menor a 4. No se puede poner ese tamaño de conductor en una charola.')
-                    print(f'Conductor de tierra fisica elegido: {calibre_tierra_fisica}')
-                    print(f'Material de tierra fisica: {material_conductor_tierra}')
-                    print('')
-
-                    Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
             
                 return indice_tierra_fisica, calibre_tierra_fisica, Area_tierra_fisica
 
@@ -233,6 +209,22 @@ class Calculos():
             Area_cable = Area_caida
 
         return indice_cable, calibre_cable, Area_cable
+
+'''                if Area_tierra_fisica < 21.2 and canalizacion == 'charola' and Area_caida <= Area_ampacidad:
+                    print('Tierra física')
+                    print('Tamaño de conductor menor a 4. No se puede poner ese tamaño de conductor en una charola.')
+                    print(f'Conductor de tierra fisica elegido: {calibre_tierra_fisica}')
+                    print(f'Material de tierra fisica: {material_conductor_tierra}')
+                    print('')
+
+                if Area_caida < 53 and numero_conductores_por_fase > 1:
+                        print('caída de tensión')
+                        print('!ERROR. Tamaño de conductor menor a 1/0. No se puede poner ese tamaño de conductor en paralelo.')
+                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibres_tabla[indice_caida]}')
+                        print('')
+                    else:
+
+                    Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]'''
 ''' 
     def calculo_eleccion_cable_tierra_fisica(self):
         if indice_tierra_fisica > indice_tierra_fisica_corregida:
