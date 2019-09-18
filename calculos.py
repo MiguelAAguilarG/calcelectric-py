@@ -9,213 +9,308 @@ class Calculos():
         else:
             self.datos_por_defecto_Calculos_dict = {
             'factor_utilizacion_interruptor': 0.8,
-            'factor_ampacidad_cable': 1.25,
+            'factor_ampacidad_cable_fase': 1.25,
+            'factor_ampacidad_cable_neutro': 1.25,
             'factor_error_Interruptor': 0.01,
             }
-            self.datos_por_defecto_Calculos_descripcion_dict = {
+            datos_por_defecto_Calculos_descripcion_dict = {
             'factor_utilizacion_interruptor': 'Corriente de uso recomendable/Corriente nominal (>0-1) NOTA: Como regla general es del 80%',
-            'factor_ampacidad_cable': 'Factor propuesto en la NOM-001-SEDE (1.25) antes de aplicar cualquier factor de correción y calculo debido al factor_utilizacion_interruptor para que no haya sobrecarga en las terminales del interruptor',
-            'factor_error_Interruptor': 'Factor para elegir interruptor y se pueda elegir uno de menor tamaño como lo indica en algunas partes de la NOM-001-SEDE (>0-valor pequeño)',
+            'factor_ampacidad_cable_fase': 'Factor propuesto en la NOM-001-SEDE (1.25) antes de aplicar cualquier factor de correción y calculo debido al factor_utilizacion_interruptor para que no haya sobrecarga en las terminales del interruptor',
+            'factor_ampacidad_cable_neutro': 'Factor de 1.25 para estar acorde al factor_ampacidad_cable_fase. Considerar cada caso en particular',
+            'factor_error_Interruptor': '(0 o algun valor pequeño). Factor para elegir interruptor y se pueda elegir uno de menor tamaño como lo indica en algunas partes de la NOM-001-SEDE (Ejemplo: 240-4(b) Dispositivos de sobrecorriente de 800 amperes o menos). Solo se aplica para interruptores de 800A o menos',
             }
 
         self.datos_por_defecto_Calculos = self.datos_por_defecto_Calculos_dict
 
         self.factor_utilizacion_interruptor = self.datos_por_defecto_Calculos['factor_utilizacion_interruptor']
-        self.factor_ampacidad_cable = self.datos_por_defecto_Calculos['factor_ampacidad_cable']
+        self.factor_ampacidad_cable_fase = self.datos_por_defecto_Calculos['factor_ampacidad_cable_fase']
+        self.factor_ampacidad_cable_neutro = self.datos_por_defecto_Calculos['factor_ampacidad_cable_neutro']
         self.factor_error_Interruptor = self.datos_por_defecto_Calculos['factor_error_Interruptor']
     
-    def calculo_Inominal(self):
+    def calculo_Inominal(self, Sistema, Carga, Voltaje, fp):
 
-        if self.Sistema == 'monofasico':
-            self.Inominal = self.Carga/(self.Voltaje*self.fp)
-        if self.Sistema == 'trifasico':
-            self.Inominal = self.Carga/(sqrt(3)*self.Voltaje*self.fp)
+        if Sistema == 'monofasico':
+            Inominal = Carga/(Voltaje*fp)
+        if Sistema == 'trifasico':
+            Inominal = Carga/(sqrt(3)*Voltaje*fp)
 
-        return self.Inominal
+        return Inominal
     
-    def calculo_Icorregida_factor_ampacidad_cable(self):
+    def calculo_Icorregida_factor_ampacidad_cable(self, Inominal, factor_ampacidad_cable):
         '''Nota calculos.Calculos.calculo_Icorregida_factor_ampacidad_cable:\nLa ampacidad del cable se determino con un factor de 1.25,\npara cambiar este factor de ampacidad (corriente máxima) del cable, agregar a los datos, ejemplo:\ndatos_por_defecto_Calculos_dict = {{'factor_ampacidad_cable': 1.0}}\nclase = calculos.Calculos(datos_por_defecto_Calculos_dict)\nclase = elementos.Carga(datos_por_defecto_Calculos_dict)'''
 
-        self.Icorregida_factor_ampacidad_cable = self.Inominal*self.factor_ampacidad_cable
+        Icorregida_factor_ampacidad_cable = Inominal*factor_ampacidad_cable
 
-        return self.Icorregida_factor_ampacidad_cable
+        return Icorregida_factor_ampacidad_cable
 
-    def calculo_Carga_corregida_factor_utilizacion_carga(self):
+    def calculo_Carga_corregida_factor_utilizacion_carga(self, Carga, factor_utilizacion_carga):
 
-        self.Carga_corregida_factor_utilizacion_carga = self.Carga*self.factor_utilizacion_carga
+        Carga_corregida_factor_utilizacion_carga = Carga*factor_utilizacion_carga
     
-        return self.Carga_corregida_factor_utilizacion_carga
+        return Carga_corregida_factor_utilizacion_carga
 
-    def calculo_Carga_corregida_factor_simultaneidad_carga(self):
+    def calculo_Carga_corregida_factor_simultaneidad_carga(self, Carga, factor_simultaneidad_carga):
 
-        self.Carga_corregida_factor_simultaneidad_carga = self.Carga*self.factor_simultaneidad_carga
+        Carga_corregida_factor_simultaneidad_carga = Carga*factor_simultaneidad_carga
     
-        return self.Carga_corregida_factor_simultaneidad_carga
+        return Carga_corregida_factor_simultaneidad_carga
 
-    def calculo_conductores_activos_canalizacion(self):
+    def calculo_conductores_activos_canalizacion(self, conductores_activos_adicionales_misma_canalizacion, misma_canalizacion, lineas, numero_conductores_por_fase, neutro_activo, numero_conductores_neutro):
 
         conductores_adicionales_totales = 0
-        for calibre_conductores_adicionales, numero_conductores_adicionales in self.conductores_activos_adicionales_misma_canalizacion.items():
+        for calibre_conductores_adicionales, numero_conductores_adicionales in conductores_activos_adicionales_misma_canalizacion.items():
             conductores_adicionales_totales = conductores_adicionales_totales + numero_conductores_adicionales
 
-        if self.misma_canalizacion == True:
-            self.conductores_activos_canalizacion = self.lineas*self.numero_conductores_por_fase + int(self.neutro_activo)*self.numero_conductores_neutro + conductores_adicionales_totales
-        elif self.misma_canalizacion == False:
-            self.conductores_activos_canalizacion = self.lineas + int(self.neutro_activo)*self.numero_conductores_neutro + conductores_adicionales_totales
+        if misma_canalizacion == True:
+            conductores_activos_canalizacion = lineas*numero_conductores_por_fase + int(neutro_activo)*numero_conductores_neutro + conductores_adicionales_totales
+        elif misma_canalizacion == False:
+            conductores_activos_canalizacion = lineas + int(neutro_activo)*numero_conductores_neutro + conductores_adicionales_totales
 
-        return self.conductores_activos_canalizacion
+        return conductores_activos_canalizacion
 
-    def calculo_Interruptor(self, Interruptores = tablas.Tablas.Interruptores_tabla):
+    def calculo_Interruptor(self, Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores):
         '''Interruptores = tablas.Tablas.Interruptores_tabla\nSe puede cambiar\nfactor_error_Interruptor = 0.01\nSe pude cambiar'''
         
-        def calculo_Interruptor_parte_iterativa(Interruptores = Interruptores):
+        def calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores):
             for x, Interruptor in enumerate(Interruptores):
-                if self.Inominal <= Interruptor*(self.factor_utilizacion_interruptor - self.factor_error_Interruptor):
-                    self.Interruptor = Interruptor
-                    self.porcentaje_utilizacion_Interruptor = self.Inominal*100/self.Interruptor
-                    break
+                if Interruptor > 800:
+                    self.factor_error_Interruptor = 0
+                if Inominal <= Interruptor*(factor_utilizacion_interruptor - self.factor_error_Interruptor):
+                    porcentaje_utilizacion_Interruptor = Inominal*100/Interruptor
+                    return Interruptor, porcentaje_utilizacion_Interruptor
             else:
                 print('!ERROR!. No se encontro un interruptor tan grande. Aumenta el nivel de voltaje para esa carga')
 
-        if self.Interruptor_forzado == 0:
-            calculo_Interruptor_parte_iterativa()
+        if Interruptor_forzado == 0:
+            Interruptor, porcentaje_utilizacion_Interruptor = calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores)
         else:
-            if self.Inominal <= self.Interruptor_forzado*(self.factor_utilizacion_interruptor - self.factor_error_Interruptor):
-                    self.Interruptor = self.Interruptor_forzado
-                    self.porcentaje_utilizacion_Interruptor = self.Inominal*100/self.Interruptor
+            if Inominal <= Interruptor_forzado*(factor_utilizacion_interruptor - factor_error_Interruptor):
+                    Interruptor = Interruptor_forzado
+                    porcentaje_utilizacion_Interruptor = Inominal*100/Interruptor
             else:
                 print('!ERROR!. Amperaje del Interruptor forzado menor a la Icorregida. Se procedio a calcular otro interruptor y porcentaje_utilizacion_Interruptor')
-                calculo_Interruptor_parte_iterativa()
+                Interruptor, porcentaje_utilizacion_Interruptor = calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores)
         
-        return self.Interruptor, self.porcentaje_utilizacion_Interruptor
+        return Interruptor, porcentaje_utilizacion_Interruptor
 
-    def calculo_factor_temperatura(self, tabla_factor_temperatura):
+    def calculo_factor_temperatura(self, tabla_factor_temperatura, Taislante, Tambiente):
 
-        self.Tambiente_tabla_factor_temperatura = tabla_factor_temperatura['parametros']['Tambiente']
+        Tambiente_tabla_factor_temperatura = tabla_factor_temperatura['parametros']['Tambiente']
 
-        self.factor_temperatura = sqrt((self.Taislante - self.Tambiente)/(self.Taislante - self.Tambiente_tabla_factor_temperatura))
+        factor_temperatura = sqrt((Taislante - Tambiente)/(Taislante - Tambiente_tabla_factor_temperatura))
 
-        return self.factor_temperatura
+        return factor_temperatura
 
-    def calculo_factor_agrupamiento(self, tabla_factor_agrupamiento):
+    def calculo_factor_agrupamiento(self, tabla_factor_agrupamiento, Longitud, conductores_activos_canalizacion):
 
-        if self.Longitud <= 0.6:#Factor de agrupamiento no aplica para 60 cm o menos. 310-15.(b)(3)(a)(2)
-            self.factor_agrupamiento = 1
+        if Longitud <= 0.6:#Factor de agrupamiento no aplica para 60 cm o menos. 310-15.(b)(3)(a)(2)
+            factor_agrupamiento = 1
         else:
-            for numero_conductores,factor in tabla_factor_agrupamiento.items(): #Determinar factor de agrupamiento NOTA: Ir a la Tabla 310-15(b)(3)(a)
-                if self.conductores_activos_canalizacion <= numero_conductores:
-                    self.factor_agrupamiento = factor
+            for numero_conductores, factor in tabla_factor_agrupamiento.items(): #Determinar factor de agrupamiento NOTA: Ir a la Tabla 310-15(b)(3)(a)
+                if conductores_activos_canalizacion <= numero_conductores:
+                    factor_agrupamiento = factor
                     break
             else:
                 print('Demasiados conductores en la canalizacion')#modificar cuando se hagan clases
-                self.factor_agrupamiento = 0
+                factor_agrupamiento = 0
 
-        return self.factor_agrupamiento
+        return factor_agrupamiento
 
-    def calculo_cable_ampacidad(self, calibres_tabla, Area_conductor_tabla):
+    def calculo_cable_ampacidad(self, calibres_tabla, Area_conductor_tabla, parte_adecuada_tabla_ampacidad_dict, Taislante, Tterminales, factor_agrupamiento, factor_temperatura, Interruptor, numero_conductores_por_fase):
 
-        Ampacidad_tabla_Taislante = self.parte_adecuada_tabla_ampacidad_dict[self.Taislante]
-        Ampacidad_tabla_Tterminales = self.parte_adecuada_tabla_ampacidad_dict[self.Tterminales]
+        Ampacidad_tabla_Taislante = parte_adecuada_tabla_ampacidad_dict[Taislante]
+        Ampacidad_tabla_Tterminales = parte_adecuada_tabla_ampacidad_dict[Tterminales]
 
-        Ampacidad_corregida_tabla_Taislante = [x*self.factor_agrupamiento*self.factor_temperatura for x in Ampacidad_tabla_Taislante]
+        Ampacidad_corregida_tabla_Taislante = [x*factor_agrupamiento*factor_temperatura for x in Ampacidad_tabla_Taislante]
 
         Ampacidad_tabla = Ampacidad_tabla_Taislante
         Ampacidad_corregida_tabla = Ampacidad_corregida_tabla_Taislante
 
         while True:
             for indice, Ampacidad_corregida in enumerate(Ampacidad_corregida_tabla):
-                if Ampacidad_corregida >= self.Interruptor/self.numero_conductores_por_fase:
+                if Ampacidad_corregida >= Interruptor/numero_conductores_por_fase:
 
-                    self.indice_ampacidad = indice
-                    self.calibre_ampacidad = calibres_tabla[indice]
-                    self.Area_ampacidad = Area_conductor_tabla[indice]
-                    self.Ampacidad = Ampacidad_tabla[indice]
-                    self.Ampacidad_corregida = Ampacidad_corregida
+                    indice_ampacidad = indice
+                    calibre_ampacidad = calibres_tabla[indice]
+                    Area_ampacidad = Area_conductor_tabla[indice]
+                    Ampacidad = Ampacidad_tabla[indice]
+                    Ampacidad_corregida = Ampacidad_corregida
 
-                    if self.Taislante > self.Tterminales and (self.factor_agrupamiento != 1 or self.Tambiente_tabla_factor_temperatura != self.Tambiente):
+                    if Taislante > Tterminales and (factor_agrupamiento != 1 or Tambiente_tabla_factor_temperatura != Tambiente):
 
                         if Ampacidad_corregida > Ampacidad_tabla_Tterminales[indice]:
                             print('Se tomo como Ampacidad_corregida la Ampacidad de Tterminales, ya que la Ampacidad_corregida de Taislante > Ampacidad de Tterminales')
-                            self.Ampacidad = Ampacidad_corregida
-                            self.Ampacidad_corregida = Ampacidad_tabla_Tterminales[indice]
+                            Ampacidad = Ampacidad_corregida
+                            Ampacidad_corregida = Ampacidad_tabla_Tterminales[indice]
 
-                    if self.Area_ampacidad < 53 and self.numero_conductores_por_fase > 1:
+                    if Area_ampacidad < 53 and numero_conductores_por_fase > 1:
                         print('Ampacidad')
                         print('!ERROR. Tamano de conductor menor a 1/0. No se puede poner ese tamaño de conductor en paralelo.')
-                        print(f'Conductor elegido por ampacidad menor a 1/0: {self.calibre_ampacidad}')
+                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibre_ampacidad}')
                         print('')
                     else:
-                        return self.indice_ampacidad, self.calibre_ampacidad, self.Area_ampacidad, self.Ampacidad, self.Ampacidad_corregida
+                        return indice_ampacidad, calibre_ampacidad, Area_ampacidad, Ampacidad, Ampacidad_corregida
             else:
                 print('Ampacidad')
                 print('!ERROR. Tamano de conductor demasiado grande. Fuera de rango de las tablas.')
                 print('Se recomienda aumentar numero de conductores por fase')
                 print('')
 
-                return None
+                return
 
-    def calculo_cable_caida_de_tension(self, calibres_tabla, Area_conductor_tabla, resistencia_tabla, reactancia_tabla):
+    def calculo_cable_caida_de_tension(self, calibres_tabla, Area_conductor_tabla, resistencia_tabla, reactancia_tabla, caida_tension, Sistema, fp, Longitud, Inominal, Voltaje, numero_conductores_por_fase):
 
         while True:
-            for self.indice_caida, self.Area_caida in enumerate(Area_conductor_tabla):
-                self.calibre_caida = calibres_tabla[self.indice_caida]
-                if self.indice_caida >= 20:
+            for indice_caida, Area_caida in enumerate(Area_conductor_tabla):
+                calibre_caida = calibres_tabla[indice_caida]
+                if indice_caida >= 20:
                     print('caída de tensión')
                     print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
                     print('Se recomienda aumentar numero de conductores por fase')
 
                     return
 
-                self.Ze = (resistencia_tabla[self.indice_caida]*self.fp + reactancia_tabla[self.indice_caida]*sin(acos(self.fp)))/1000
+                Ze = (resistencia_tabla[indice_caida]*fp + reactancia_tabla[indice_caida]*sin(acos(fp)))/1000
 
-                if self.Sistema == 'monofasico':
-                    self.caida_tension_calculada = 2*self.Ze*self.Longitud*self.Inominal*100/self.Voltaje/self.numero_conductores_por_fase
-                elif self.Sistema == 'trifasico':
-                    self.caida_tension_calculada = sqrt(3)*self.Ze*self.Longitud*self.Inominal*100/self.Voltaje/self.numero_conductores_por_fase
+                if Sistema == 'monofasico':
+                    caida_tension_calculada = 2*Ze*Longitud*Inominal*100/Voltaje/numero_conductores_por_fase
+                elif Sistema == 'trifasico':
+                    caida_tension_calculada = sqrt(3)*Ze*Longitud*Inominal*100/Voltaje/numero_conductores_por_fase
             
-                if self.caida_tension_calculada <= self.caida_tension:
+                if caida_tension_calculada <= caida_tension:
 
-                    if self.Area_caida < 53 and self.numero_conductores_por_fase > 1:
+                    if Area_caida < 53 and numero_conductores_por_fase > 1:
                         print('caída de tensión')
                         print('!ERROR. Tamaño de conductor menor a 1/0. No se puede poner ese tamaño de conductor en paralelo.')
-                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibres_tabla[self.indice_caida]}')
+                        print(f'Conductor elegido por ampacidad menor a 1/0: {calibres_tabla[indice_caida]}')
                         print('')
                     else:
-                        return self.indice_caida, self.calibre_caida, self.Area_caida, self.caida_tension_calculada
+                        return indice_caida, calibre_caida, Area_caida, caida_tension_calculada
             else:
                 print('caída de tensión')
                 print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
                 print('Se recomienda aumentar numero de conductores por fase')
 
-    def calculo_cable_tierra_fisica(self, calibres_tabla, Area_tierra_tabla, interruptor_tierra_fisica_tabla, tierra_fisica_tabla):
+    def calculo_cable_tierra_fisica(self, calibres_tabla, Area_tierra_tabla, interruptor_tierra_fisica_tabla, tierra_fisica_tabla, Interruptor, canalizacion, Area_caida, Area_ampacidad):
 
-        for self.indice_tierra_fisica, self.interruptor_tierra_fisica in enumerate(interruptor_tierra_fisica_tabla):
-            if self.Interruptor <= self.interruptor_tierra_fisica:
-                self.calibre_tierra_fisica = tierra_fisica_tabla[self.indice_tierra_fisica]
-                self.Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(self.calibre_tierra_fisica)]
+        for indice_tierra_fisica, interruptor_tierra_fisica in enumerate(interruptor_tierra_fisica_tabla):
+            if Interruptor <= interruptor_tierra_fisica:
+                calibre_tierra_fisica = tierra_fisica_tabla[indice_tierra_fisica]
+                Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
 
-                if self.Area_tierra_fisica < 21.2 and self.canalizacion == 'charola' and self.Area_caida <= self.Area_ampacidad:
+                if Area_tierra_fisica < 21.2 and canalizacion == 'charola' and Area_caida <= Area_ampacidad:
                     print('Tierra física')
                     print('Tamaño de conductor menor a 4. No se puede poner ese tamaño de conductor en una charola.')
-                    print(f'Conductor de tierra fisica elegido: {self.calibre_tierra_fisica}')
-                    print(f'Material de tierra fisica: {self.material_conductor_tierra}')
+                    print(f'Conductor de tierra fisica elegido: {calibre_tierra_fisica}')
+                    print(f'Material de tierra fisica: {material_conductor_tierra}')
                     print('')
 
-                    self.Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(self.calibre_tierra_fisica)]
+                    Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
             
-                return self.calibre_tierra_fisica, self.Area_tierra_fisica
+                return indice_tierra_fisica, calibre_tierra_fisica, Area_tierra_fisica
 
-    def calculo_cable_tierra_fisica_corregida(self, calibres_tabla, Area_conductor_tabla):
+    def calculo_cable_tierra_fisica_corregida(self, calibres_tabla, Area_conductor_tabla, Area_caida, Area_ampacidad, Area_tierra_fisica):
 
-        self.factor_correccion_cable_tierra_fisica = self.Area_caida/self.Area_ampacidad
-        self.Area_tierra_fisica_corregida_ideal = self.Area_tierra_fisica*self.factor_correccion_cable_tierra_fisica
+        factor_correccion_cable_tierra_fisica = Area_caida/Area_ampacidad
+        Area_tierra_fisica_corregida_ideal = Area_tierra_fisica*factor_correccion_cable_tierra_fisica
 
         while True:
-            for self.indice_tierra_fisica_corregida, self.Area_tierra_fisica_corregida in enumerate(Area_conductor_tabla):
-                if self.Area_tierra_fisica_corregida >= self.Area_tierra_fisica_corregida_ideal:
-                    self.calibre_tierra_fisica_corregida = calibres_tabla[self.indice_tierra_fisica_corregida]
+            for indice_tierra_fisica_corregida, Area_tierra_fisica_corregida in enumerate(Area_conductor_tabla):
+                if Area_tierra_fisica_corregida >= Area_tierra_fisica_corregida_ideal:
+                    calibre_tierra_fisica_corregida = calibres_tabla[indice_tierra_fisica_corregida]
 
-                    return self.factor_correccion_cable_tierra_fisica, self.Area_tierra_fisica_corregida_ideal, self.indice_tierra_fisica_corregida, self.calibre_tierra_fisica_corregida, self.Area_tierra_fisica_corregida  
+                    return factor_correccion_cable_tierra_fisica, Area_tierra_fisica_corregida_ideal, indice_tierra_fisica_corregida, calibre_tierra_fisica_corregida, Area_tierra_fisica_corregida
+
+    def calculo_eleccion_cable_ampacidad_caida(self, indice_ampacidad, calibre_ampacidad, Area_ampacidad, indice_caida, calibre_caida, Area_caida):
+
+        if indice_ampacidad > indice_caida:
+            indice_cable = indice_ampacidad
+            calibre_cable = calibre_ampacidad
+            Area_cable = Area_ampacidad
+        else:
+            indice_cable = indice_caida
+            calibre_cable = calibre_caida
+            Area_cable = Area_caida
+
+        return indice_cable, calibre_cable, Area_cable
+''' 
+    def calculo_eleccion_cable_tierra_fisica(self):
+        if indice_tierra_fisica > indice_tierra_fisica_corregida:
+            indice_tierra_fisica_final = indice_tierra_fisica
+            calibre_tierra_fisica_final = calibre_tierra_fisica
+            Area_tierra_fisica_final = Area_tierra_fisica
+        else:
+            indice_tierra_fisica_final = indice_tierra_fisica_corregida
+            calibre_tierra_fisica_final = calibre_tierra_fisica_corregida
+            Area_tierra_fisica_final = Area_tierra_fisica_corregida
+
+        if  adicionar_tierra_fisica_aislada == True:
+            indice_tierra_fisica_aislada = indice_tierra_fisica_final
+            calibre_tierra_fisica_aislada = calibre_tierra_fisica_final
+            Area_tierra_fisica_aislada = Area_tierra_fisica_final
+
+            return indice_tierra_fisica_final, calibre_tierra_fisica_final, Area_tierra_fisica_final, indice_tierra_fisica_aislada, calibre_tierra_fisica_aislada, Area_tierra_fisica_aislada
+
+        return indice_tierra_fisica_final, calibre_tierra_fisica_final, Area_tierra_fisica_final
+
+    def calculo_cable_neutro(self):
+
+        if numero_conductores_neutro > 0:
+            ': 1,'tamano_neutro_porcentaje_contra_fase': 100,
+
+        if tipo_circuito == 'alimentador':
+            indice_tierra_fisica_final = indice_tierra_fisica
+            calibre_tierra_fisica_final = calibre_tierra_fisica
+            Area_tierra_fisica_final = Area_tierra_fisica
+        else:
+            indice_tierra_fisica_final = indice_tierra_fisica_corregida
+            calibre_tierra_fisica_final = calibre_tierra_fisica_corregida
+            Area_tierra_fisica_final = Area_tierra_fisica_corregida
+
+        if  adicionar_tierra_fisica_aislada == True:
+            indice_tierra_fisica_aislada = indice_tierra_fisica_final
+            calibre_tierra_fisica_aislada = calibre_tierra_fisica_final
+            Area_tierra_fisica_aislada = Area_tierra_fisica_final
+
+            return indice_tierra_fisica_final, calibre_tierra_fisica_final, Area_tierra_fisica_final, indice_tierra_fisica_aislada, calibre_tierra_fisica_aislada, Area_tierra_fisica_aislada
+
+        return indice_tierra_fisica_final, calibre_tierra_fisica_final, Area_tierra_fisica_final
+
+    def calculo_Area_conductores(self):
+
+        for indice_conduit, conduit in enumerate(tabla_conduit_adecuada_lista):
+
+
+        if tabla_conduit_adecuada_lista
+            indice_cable_fase = indice_ampacidad
+            calibre_cable_fase = calibre_ampacidad
+            Area_cable_fase = Area_ampacidad
+        else:
+            indice_cable_fase = indice_caida
+            calibre_cable_fase = calibre_caida
+            Area_cable_fase = Area_caida
+
+        return indice_cable_fase, calibre_cable_fase, Area_cable_fase
+
+    def calculo_dimension_conduit(self, tabla_conduit_adecuada_lista, indice_ampacidad, calibre_cable_fase = calibre_ampacidad
+                Area_cable_fase = Area_ampacidad
+            else:
+                indice_cable_fase = indice_caida
+                calibre_cable_fase = calibre_caida
+                Area_cable_fase = Area_caida):
+
+        for indice_conduit, conduit in enumerate(tabla_conduit_adecuada_lista):
+
+            if tabla_conduit_adecuada_lista
+                indice_cable_fase = indice_ampacidad
+                calibre_cable_fase = calibre_ampacidad
+                Area_cable_fase = Area_ampacidad
+            else:
+                indice_cable_fase = indice_caida
+                calibre_cable_fase = calibre_caida
+                Area_cable_fase = Area_caida
+
+        return indice_cable_fase, calibre_cable_fase, Area_cable_fase'''
 
     
 
