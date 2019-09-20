@@ -9,20 +9,21 @@ datos_entrada_dict = {
 'factor_utilizacion_carga': 1,
 'factor_simultaneidad_carga': 1,
 'Interruptor_forzado': 0,
-'tipo_circuito': 'alimentador',
+'factor_Inominal_Interruptor': 1,
+'tipo_circuito': 'derivado',
 'caida_tension': 3,
-'Longitud': 50,
+'Longitud': 10,
 'Tambiente': 40,
 'aislante_conductor': 'THHW',
 'Taislante': 90,
 'Tterminales': 75,
 'material_conductor': 'cobre',
 'numero_conductores_por_fase': 2,
-'numero_conductores_neutro': 1,
-'tamano_neutro_porcentaje_Inominal': 100,
-'neutro_activo': True,
+'numero_conductores_neutro': 0,
+'factor_Inominal_neutro': 1,
+'neutro_activo_factor_agrupamiento': True,
 'tierra_fisica_forrada': False,
-'adicionar_tierra_fisica_aislada': True, 
+'adicionar_tierra_fisica_aislada': False, 
 'canalizacion': 'conduit',
 'tipo_conduit': 'EMT',
 'material_canalizacion': 'acero',
@@ -31,11 +32,11 @@ datos_entrada_dict = {
 'conductores_no_activos_adicionales_misma_canalizacion': {'14': 0},
 }
 
-#datos_por_defecto_Calculos_dict = {} #Sobreescritura de datos por defecto en los calculos
+#datos_por_defecto_Calculos_dict = {'factor_ampacidad_cable_neutro': 1} #Sobreescritura de datos por defecto en los calculos
 
 datos_entrada_descripcion_dict = {
 'Sistema': 'Sistema (\'monofasico\',  \'trifasico\')',
-'lineas': '(1, 2, 3) Para sistemas trifásicos obligatoriamente deben de ser 3 líneas, se aplica por defecto, para sistemas monofásicos pueden ser 1 o 2 lineas',
+'lineas': '(1, 2, 3) Para sistemas trifásicos pueden ser 2 o 3 lineas, para sistemas monofásicos pueden ser 1 o 2 lineas',
 'Voltaje': 'Voltaje nominal = Voltaje de linea (V)',
 'Carga': 'Carga (W)',
 'fp': 'factor de potencia (>0 a 1)',
@@ -63,5 +64,3 @@ datos_entrada_descripcion_dict = {
 'conductores_activos_adicionales_misma_canalizacion': 'Número de conductores portadores de corriente adicionales a los calculados para el circuito. Estos conductores estaran presentes siempre en la canalización calculada, sea misma_canalizacion = True o False. NOTA: Estos conductores siempre se consideran que tienen aislante y que es el mismo que usa el conductor de fase. Ejemplo: 1 conductor calibre 14, 2 conductores calibre 1/0 => {\'14\': 1, \'1/0\'}: 2}. Sino hay => {}',
 'conductores_no_activos_adicionales_misma_canalizacion': 'Número de conductores no portadores de corriente adicionales a los calculados para el circuito. Estos conductores estaran presentes siempre en la canalización calculada, sea misma_canalizacion = True o False. NOTA: Estos conductores siempre se consideran que no tienen aislante. Ejemplo: 0 conductores 250 kcmil, 3 conductores calibre 4/0 => {\'250\': 0, \'4/0\'}: 3}. Sino hay => {}'
 }
-
-'''110-14(c)(1)'''

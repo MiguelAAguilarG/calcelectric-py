@@ -1,6 +1,6 @@
 class Tablas():
 
-    Area_conductor_tabla = (2.08, 3.31, 5.26, 8.37, 13.3, 21.2, 26.7, 33.6, 42.4, 53.49, 67.43, 85.01, 107.2, 127.0, 152.0, 177.0, 203.0, 253.0, 304.0, 355.0, 380.0, 405.0, 456.0, 507.0, 633.0, 700.0, 887.0, 1013.0)
+    Area_conductor_tabla = (2.08, 3.31, 5.26, 8.37, 13.3, 21.2, 26.7, 33.6, 42.4, 53.49, 67.43, 85.01, 107.2, 127, 152.0, 177, 203, 253, 304, 355, 380, 405, 456, 507, 633, 700, 887, 1013)
 
     calibres_tabla = ('14', '12', '10', '8', '6', '4', '3', '2', '1', '1/0', '2/0', '3/0', '4/0', '250', '300', '350', '400', '500', '600', '700', '750', '800', '900', '1000', '1250', '1500', '1750', '2000')
 
@@ -82,6 +82,16 @@ class Tablas():
     calibre_tierra_fisica_tabla_250_122['datos']['material_conductor']['cobre'] = ('14', '12', '10', '8', '6', '4', '2', '2', '1', '1/0', '2/0', '3/0', '4/0', '250', '350', '400', '500', '700', '800')
     calibre_tierra_fisica_tabla_250_122['datos']['material_conductor']['aluminio'] = ('0', '0', '0', '0', '4', '2', '1', '1/0', '2/0', '3/0', '4/0', '250', '350', '400', '600', '600', '750', '1200', '1200')
 
+    conductor_electrodo_tabla_250_66 = {}
+    conductor_electrodo_tabla_250_66['parametros'] = {}
+    #############################################
+    conductor_electrodo_tabla_250_66['datos'] = {}
+    conductor_electrodo_tabla_250_66['datos']['conductor_entrada'] = {}
+    conductor_electrodo_tabla_250_66['datos']['conductor_electrodo'] = {}
+    #############################################
+    conductor_electrodo_tabla_250_66['datos']['conductor_entrada']['material_conductor'] = {'cobre' : {0:33.6, 42.4:53.5, 67.4:85.01, 85.011:177, 177.1:304, 304.1:557.38, 557.381:1013}, 'aluminio': {0:53.5, 67.4:85.01, 107:127.2, 127.21:253, 253.1:456, 456.1:887, 887.1:1013}}
+    conductor_electrodo_tabla_250_66['datos']['conductor_electrodo']['material_conductor'] = {'cobre' : ('8', '6', '4', '2', '1/0', '2/0', '3/0'), 'aluminio': ('6', '4', '2', '1/0', '3/0', '4/0', '250')}
+    
     dimensiones_cables_tabla_5 = {}
     dimensiones_cables_tabla_5['parametros'] = {'aislante_condutor': ('THW, THHW, THW-2', 'THHN, THWN, THWN-2', 'XHHW, XHHW-2, XHH', 'RHH, RHW, RHW-2', 'RHH*, RHW*, RHW-2*'), 'unidad': 'mm'}
     dimensiones_cables_tabla_5['datos'] = {'aislante_condutor':{}}

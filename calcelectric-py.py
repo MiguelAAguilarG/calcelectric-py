@@ -5,7 +5,8 @@ import tablas
 import datos
 
 if __name__ == "__main__":
-    datos = datos.datos_entrada_dict
-    Carga = elementos.Carga(datos)
+
+    #Carga = elementos.Carga(datos.datos_entrada_dict, datos.datos_por_defecto_Calculos_dict)
+    Carga = elementos.Carga(datos.datos_entrada_dict)
 
     Carga.calculo_basico()
