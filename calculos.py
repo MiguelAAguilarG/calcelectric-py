@@ -91,7 +91,10 @@ class Calculos():
         if misma_canalizacion == True:
             conductores_activos_canalizacion = lineas*numero_conductores_por_fase + int(neutro_activo)*numero_conductores_neutro + conductores_adicionales_totales
         elif misma_canalizacion == False:
-            conductores_activos_canalizacion = lineas + int(neutro_activo)*int(numero_conductores_neutro/lineas) + conductores_adicionales_totales
+            if numero_conductores_neutro/lineas > 1:
+                conductores_activos_canalizacion = lineas + int(neutro_activo)*ceil(numero_conductores_neutro/lineas) + conductores_adicionales_totales
+            else:
+                conductores_activos_canalizacion = lineas + int(neutro_activo)*int(numero_conductores_neutro/lineas) + conductores_adicionales_totales
 
         return conductores_activos_canalizacion, numero_conductores_por_fase, numero_conductores_neutro
 
