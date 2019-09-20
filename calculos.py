@@ -1,4 +1,4 @@
-from math import sqrt, sin, acos
+from math import sqrt, sin, acos, floor, ceil
 import tablas
 
 class Calculos():
@@ -29,7 +29,7 @@ class Calculos():
         self.factor_ampacidad_cable_neutro = self.datos_por_defecto_Calculos['factor_ampacidad_cable_neutro']
         self.factor_error_Interruptor = self.datos_por_defecto_Calculos['factor_error_Interruptor']
     
-    def calculo_Inominal(self, Sistema, lineas, numero_conductores_neutro, Carga, Voltaje, fp):
+    def calculo_Inominal(self, Sistema, lineas, numero_conductores_neutro, Carga, Voltaje, fp,factor_Inominal_fase_aplicado_neutro):
 
         if Sistema == 'monofasico':
             if lineas == 1:
@@ -52,6 +52,8 @@ class Calculos():
             elif lineas == 3:
                 Inominal_fase = Carga/(sqrt(3)*Voltaje*fp)
                 Inominal_neutro = 0
+
+        Inominal_neutro = Inominal_neutro + Inominal_fase*factor_Inominal_fase_aplicado_neutro
 
         return Inominal_fase, Inominal_neutro
     
@@ -81,16 +83,15 @@ class Calculos():
             conductores_adicionales_totales = conductores_adicionales_totales + numero_conductores_adicionales
 
         if Inominal_neutro >= Inominal_fase:
-            if numero_conductores_por_fase != numero_conductores_neutro:
-                print('Precaución: Inominal_fase = Inominal_neutro\npero numero_conductores_por_fase diferente a numero_conductores_neutro')
-                print('Se precedio a igualar numero_conductores_por_fase y numero_conductores_neutro, con el mayor de los 2')
-                numero_conductores_por_fase = max(numero_conductores_por_fase, numero_conductores_neutro)
+            if numero_conductores_por_fase > numero_conductores_neutro:
+                print('Precaución: Inominal_fase >= Inominal_neutro\npero numero_conductores_por_fase diferente a numero_conductores_neutro')
+                print('Se precedio a numero_conductores_neutro = numero_conductores_por_fase\n')
                 numero_conductores_neutro = numero_conductores_por_fase
 
         if misma_canalizacion == True:
             conductores_activos_canalizacion = lineas*numero_conductores_por_fase + int(neutro_activo)*numero_conductores_neutro + conductores_adicionales_totales
         elif misma_canalizacion == False:
-            conductores_activos_canalizacion = lineas + int(neutro_activo)*numero_conductores_neutro + conductores_adicionales_totales
+            conductores_activos_canalizacion = lineas + int(neutro_activo)*int(numero_conductores_neutro/lineas) + conductores_adicionales_totales
 
         return conductores_activos_canalizacion, numero_conductores_por_fase, numero_conductores_neutro
 
@@ -178,7 +179,7 @@ class Calculos():
 
                         if Ampacidad_corregida > Ampacidad_tabla_Tterminales[indice]:
                             print(palabra_control)
-                            print('Se tomo como Ampacidad_corregida la Ampacidad de Tterminales, ya que la Ampacidad_corregida de Taislante > Ampacidad de Tterminales. 110-14(c)(1)')
+                            print('Se tomo como Ampacidad_corregida la Ampacidad de Tterminales, ya que la Ampacidad_corregida de Taislante > Ampacidad de Tterminales. 110-14(c)(1)\n')
                             Ampacidad = Ampacidad_corregida
                             Ampacidad_corregida = Ampacidad_tabla_Tterminales[indice]
 
@@ -186,8 +187,7 @@ class Calculos():
             else:
                 print('Ampacidad')
                 print('!ERROR. Tamano de conductor demasiado grande. Fuera de rango de las tablas.')
-                print('Se recomienda aumentar numero de conductores')
-                print('')
+                print('Se recomienda aumentar numero de conductores\n')
 
                 return
 
@@ -199,7 +199,7 @@ class Calculos():
                 if indice_caida >= 20:
                     print('caída de tensión')
                     print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
-                    print('Se recomienda aumentar numero de conductores por fase')
+                    print('Se recomienda aumentar numero de conductores por fase\n')
 
                     return
 
@@ -223,7 +223,7 @@ class Calculos():
             else:
                 print('caída de tensión')
                 print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
-                print('Se recomienda aumentar numero de conductores por fase')
+                print('Se recomienda aumentar numero de conductores por fase\n')
 
     def calculo_cable_tierra_fisica(self, calibres_tabla, Area_tierra_tabla, interruptor_tierra_fisica_tabla, tierra_fisica_tabla, Interruptor, canalizacion, Area_caida, Area_ampacidad):
 
@@ -240,14 +240,14 @@ class Calculos():
             return False, False, False, False, False
         else:
             factor_correccion_cable_tierra_fisica = Area_caida/Area_ampacidad
-            Area_tierra_fisica_corregida_ideal = Area_tierra_fisica*factor_correccion_cable_tierra_fisica
+            Area_tierra_fisica_corregida_caida_ideal = Area_tierra_fisica*factor_correccion_cable_tierra_fisica
 
             while True:
-                for indice_tierra_fisica_corregida, Area_tierra_fisica_corregida in enumerate(Area_conductor_tabla):
-                    if Area_tierra_fisica_corregida >= Area_tierra_fisica_corregida_ideal:
-                        calibre_tierra_fisica_corregida = calibres_tabla[indice_tierra_fisica_corregida]
+                for indice_tierra_fisica_corregida, Area_tierra_fisica_corregida_caida in enumerate(Area_conductor_tabla):
+                    if Area_tierra_fisica_corregida_caida >= Area_tierra_fisica_corregida_caida_ideal:
+                        calibre_tierra_fisica_corregida_caida = calibres_tabla[indice_tierra_fisica_corregida]
 
-                        return factor_correccion_cable_tierra_fisica, Area_tierra_fisica_corregida_ideal, indice_tierra_fisica_corregida, calibre_tierra_fisica_corregida, Area_tierra_fisica_corregida
+                        return factor_correccion_cable_tierra_fisica, Area_tierra_fisica_corregida_caida_ideal, indice_tierra_fisica_corregida, calibre_tierra_fisica_corregida_caida, Area_tierra_fisica_corregida_caida
 
     def calculo_eleccion_cable_ampacidad_VS_caida(self, indice_ampacidad, calibre_ampacidad, Area_ampacidad, indice_caida, calibre_caida, Area_caida, canalizacion, numero_conductores):
 
@@ -261,21 +261,21 @@ class Calculos():
             Area_cable = Area_caida
 
         if 'charola' in canalizacion and indice_cable <= 5:
-            print('calculos.Calculos.calculo_eleccion_cable_ampacidad_caida_fase')
+            print('fase\ncalculos.Calculos.calculo_eleccion_cable_ampacidad_VS_caida')
             print('!ERROR. Tamaño del conductor menor a 4.')
             print('***De forma automatica se procederá a seleccionar calibre 4***')
-            print('No se puede poner ese tamaño de conductor en una charola. Artículo 392')
+            print('No se puede poner ese tamaño de conductor en una charola. Artículo 392\n')
 
             indice_cable = 6
             calibre_cable = '4'
             Area_cable = 21.2
 
         if indice_cable <= 9 and numero_conductores > 1:
-            print('calculos.Calculos.calculo_eleccion_cable_ampacidad_caida_fase')
+            print('fase\ncalculos.Calculos.calculo_eleccion_cable_ampacidad_VS_caida')
             print('!ERROR. Tamaño de conductor menor a 1/0.')
             print(f'Conductor elegido: {calibre_cable}')
             print('***De forma automatica se procederá a seleccionar calibre 1/0***')
-            print('No se puede poner ese tamaño de conductor en paralelo.\n300-3. Conductores. b) Conductores del mismo circuito. 1) Instalaciones en paralelo. Se permitirá tender los conductores en paralelo de acuerdo con las disposiciones de 310-10(h) ... y los conductores de puesta a tierra del equipo deben cumplir con las disposiciones de 250-122. \n310-10. h) Conductores en paralelo. 1) Generalidades. Se permitirá que los conductores de aluminio, de aluminio recubierto de cobre o de cobre de tamaño 53.5 mm2 (1/0 AWG) y mayor, que sean los de fase, polaridad, neutro o el puesto a tierra del circuito estén conectados en paralelo (unidos eléctricamente en ambos extremos) cuando se instalen de acuerdo con (2) a (6) siguientes.')
+            print('No se puede poner ese tamaño de conductor en paralelo.\n300-3. Conductores. b) Conductores del mismo circuito. 1) Instalaciones en paralelo. Se permitirá tender los conductores en paralelo de acuerdo con las disposiciones de 310-10(h) ... y los conductores de puesta a tierra del equipo deben cumplir con las disposiciones de 250-122. \n310-10. h) Conductores en paralelo. 1) Generalidades. Se permitirá que los conductores de aluminio, de aluminio recubierto de cobre o de cobre de tamaño 53.5 mm2 (1/0 AWG) y mayor, que sean los de fase, polaridad, neutro o el puesto a tierra del circuito estén conectados en paralelo (unidos eléctricamente en ambos extremos) cuando se instalen de acuerdo con (2) a (6) siguientes.\n')
 
             indice_cable = 10
             calibre_cable = '1/0'
@@ -283,7 +283,7 @@ class Calculos():
 
         return indice_cable, calibre_cable, Area_cable
 
-    def calculo_eleccion_cable_tierra_fisica(self, indice_tierra_fisica, calibre_tierra_fisica, Area_tierra_fisica, indice_tierra_fisica_corregida, calibre_tierra_fisica_corregida, Area_tierra_fisica_corregida, indice_cable_fase, calibre_cable_fase, Area_cable_fase, canalizacion, adicionar_tierra_fisica_aislada):
+    def calculo_eleccion_cable_tierra_fisica(self, indice_tierra_fisica, calibre_tierra_fisica, Area_tierra_fisica, indice_tierra_fisica_corregida, calibre_tierra_fisica_corregida_caida, Area_tierra_fisica_corregida_caida, indice_cable_fase, calibre_cable_fase, Area_cable_fase, canalizacion, adicionar_tierra_fisica_aislada):
 
         if indice_tierra_fisica > indice_tierra_fisica_corregida:
             indice_tierra_fisica_final = indice_tierra_fisica
@@ -291,15 +291,15 @@ class Calculos():
             Area_tierra_fisica_final = Area_tierra_fisica
         else:
             indice_tierra_fisica_final = indice_tierra_fisica_corregida
-            calibre_tierra_fisica_final = calibre_tierra_fisica_corregida
-            Area_tierra_fisica_final = Area_tierra_fisica_corregida
+            calibre_tierra_fisica_final = calibre_tierra_fisica_corregida_caida
+            Area_tierra_fisica_final = Area_tierra_fisica_corregida_caida
 
         if 'charola' in canalizacion and indice_tierra_fisica_final <= 5:
             print('calculos.Calculos.calculo_eleccion_cable_tierra_fisica')
             print('tierra fisica')
             print('!ERROR. Tamaño del conductor menor a 4.')
             print('***De forma automatica se procederá a seleccionar calibre 4***')
-            print('No se puede poner ese tamaño de conductor en una charola. Artículo 392')
+            print('No se puede poner ese tamaño de conductor en una charola. Artículo 392\n')
 
             indice_tierra_fisica_final = 6
             calibre_tierra_fisica_final = '4'
@@ -315,7 +315,7 @@ class Calculos():
                 print('tierra fisica aislada')
                 print('!ERROR. Tamaño del conductor menor a 4.')
                 print('***De forma automatica se procederá a seleccionar calibre 4***')
-                print('No se puede poner ese tamaño de conductor en una charola. Artículo 392')
+                print('No se puede poner ese tamaño de conductor en una charola. Artículo 392\n')
 
                 indice_tierra_fisica_aislada = 6
                 calibre_tierra_fisica_aislada = '4'
@@ -330,7 +330,7 @@ class Calculos():
             print('calculos.Calculos.calculo_eleccion_cable_tierra_fisica')
             print('!ERROR. indice_tierra_fisica_final > indice_cable_fase.')
             print('***De forma automatica se procederá a seleccionar un calibre de tierra fisica igual que el de fase***')
-            print('250-122. Tamaño de los conductores de puesta a tierra de equipos a) General. Los conductores de puesta a tierra de equipos, de cobre, aluminio, o aluminio recubierto de cobre, del tipo alambre, no deben ser de tamaño menor a los mostrados en la Tabla 250-122, pero en ningún caso se exigirá que sean mayores que los conductores de los circuitos que alimentan el equipo.')
+            print('250-122. Tamaño de los conductores de puesta a tierra de equipos a) General. Los conductores de puesta a tierra de equipos, de cobre, aluminio, o aluminio recubierto de cobre, del tipo alambre, no deben ser de tamaño menor a los mostrados en la Tabla 250-122, pero en ningún caso se exigirá que sean mayores que los conductores de los circuitos que alimentan el equipo.\n')
 
             indice_tierra_fisica_final = indice_cable_fase
             calibre_tierra_fisica_final = calibre_cable_fase
@@ -359,7 +359,7 @@ class Calculos():
                     if factor_Area_fase_VS_Area_conductor_electrodo >= 0.125:
                         pass
                     else:
-                        print('calculos.Calculos.calculo_conductor_electrodo\nAdvertencia. factor_Area_fase_VS_Area_conductor_electrodo = Area_fase/Area_conductor_electrodo < 0.125\n Se procederá a calcular automáticamente otro conductor con un factor_Area_fase_VS_Area_conductor_electrodo > 0.125')
+                        print('calculos.Calculos.calculo_conductor_electrodo\nAdvertencia. factor_Area_fase_VS_Area_conductor_electrodo = Area_fase/Area_conductor_electrodo < 0.125\n Se procederá a calcular automáticamente otro conductor con un factor_Area_fase_VS_Area_conductor_electrodo > 0.125\n')
                         for indice_conductor, Area_conductor in Area_conductor_tabla:
                             factor_Area_fase_VS_Area_conductor_electrodo = Area_fase/Area_conductor
                             if factor_Area_fase_VS_Area_conductor_electrodo >= 0.125:
@@ -380,6 +380,9 @@ class Calculos():
             indice_cable_neutro = indice_cable_fase
             calibre_cable_neutro = calibre_cable_fase
             Area_cable_neutro = Area_cable_fase
+
+            return indice_cable_neutro, calibre_cable_neutro, Area_cable_neutro
+
         else:
             if numero_conductores_neutro > 0:
 
@@ -391,15 +394,15 @@ class Calculos():
                     pass
                 elif tipo_circuito == 'alimentador':
                     if factor_ampacidad_cable_neutro != 1:
-                        print('Para tipo_circuito = alimentador, el factor_ampacidad_cable_neutro para cargas continuas puede ser de 1.\nSi desea hacer el cambio hagalo manualmente en datos.datos_por_defecto_Calculos_dict = {\'factor_ampacidad_cable_neutro\': 1}.')
+                        print('Para tipo_circuito = alimentador, el factor_ampacidad_cable_neutro para cargas continuas puede ser de 1.\nSi desea hacer el cambio hagalo manualmente en datos.datos_por_defecto_Calculos_dict = {\'factor_ampacidad_cable_neutro\': 1}.\n')
                     if indice_ampacidad_neutro <= indice_tierra_fisica_final:
-                        print('Para tipo_circuito = alimentador, el calibre_cable_neutro no puede ser menor a calibre_tierra_fisica_final\nSe procederá a hacer el cambio automáticamente')
+                        print('Para tipo_circuito = alimentador, el calibre_cable_neutro no puede ser menor a calibre_tierra_fisica_final\nSe procederá a hacer el cambio automáticamente\n')
                         indice_cable_neutro = indice_tierra_fisica_final
                         calibre_cable_neutro = calibre_tierra_fisica_final
                         Area_cable_neutro = Area_tierra_fisica_final
                 elif tipo_circuito == 'acometida':
                     if indice_ampacidad_neutro <= indice_tierra_fisica_final:
-                        print('Para tipo_circuito = acometida, el calibre_cable_neutro no puede ser menor a calibre_tierra_fisica_final(Se refiere al conductor de electrodo)\nSe procederá a hacer el cambio automáticamente')
+                        print('Para tipo_circuito = acometida, el calibre_cable_neutro no puede ser menor a calibre_tierra_fisica_final(Se refiere al conductor de electrodo)\nSe procederá a hacer el cambio automáticamente\n')
                         indice_cable_neutro = indice_tierra_fisica_final
                         calibre_cable_neutro = calibre_tierra_fisica_final
                         Area_cable_neutro = Area_tierra_fisica_final

@@ -27,7 +27,7 @@ class Carga(calculos.Calculos):
         self.material_conductor = self.datos_entrada['material_conductor']
         self.numero_conductores_por_fase = self.datos_entrada['numero_conductores_por_fase']
         self.numero_conductores_neutro = self.datos_entrada['numero_conductores_neutro']
-        self.factor_Inominal_neutro = self.datos_entrada['factor_Inominal_neutro']
+        self.factor_Inominal_fase_aplicado_neutro = self.datos_entrada['factor_Inominal_fase_aplicado_neutro']
         self.neutro_activo_factor_agrupamiento = self.datos_entrada['neutro_activo_factor_agrupamiento']
         self.tierra_fisica_forrada = self.datos_entrada['tierra_fisica_forrada']
         self.adicionar_tierra_fisica_aislada = self.datos_entrada['adicionar_tierra_fisica_aislada']
@@ -49,7 +49,7 @@ class Carga(calculos.Calculos):
 
         self.Carga = self.Carga_corregida_factor_simultaneidad_carga
 
-        self.Inominal_fase, self.Inominal_neutro = self.calculo_Inominal(self.Sistema, self.lineas, self.numero_conductores_neutro, self.Carga, self.Voltaje, self.fp)
+        self.Inominal_fase, self.Inominal_neutro = self.calculo_Inominal(self.Sistema, self.lineas, self.numero_conductores_neutro, self.Carga, self.Voltaje, self.fp, self.factor_Inominal_fase_aplicado_neutro)
 
         ''' FASE '''
 
@@ -96,11 +96,11 @@ class Carga(calculos.Calculos):
             ####################
             self.indice_tierra_fisica, self.calibre_tierra_fisica, self.Area_tierra_fisica = self.calculo_cable_tierra_fisica(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_interruptor_tierra_fisica_adecuada_lista, self.tabla_tierra_fisica_adecuada_lista, self.Interruptor, self.canalizacion, self.Area_caida_fase, self.Area_ampacidad_fase)
 
-        self.factor_correccion_cable_tierra_fisica, self.Area_tierra_fisica_corregida_ideal, self.indice_tierra_fisica_corregida, self.calibre_tierra_fisica_corregida, self.Area_tierra_fisica_corregida = self.calculo_cable_tierra_fisica_corregida(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.Area_caida_fase, self.Area_ampacidad_fase, self.Area_tierra_fisica, self.tipo_circuito)
+        self.factor_correccion_cable_tierra_fisica, self.Area_tierra_fisica_corregida_caida_ideal, self.indice_tierra_fisica_corregida, self.calibre_tierra_fisica_corregida_caida, self.Area_tierra_fisica_corregida_caida = self.calculo_cable_tierra_fisica_corregida(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.Area_caida_fase, self.Area_ampacidad_fase, self.Area_tierra_fisica, self.tipo_circuito)
 
         ''' Elección de cable de tierra fisica'''
 
-        self.indice_tierra_fisica_final, self.calibre_tierra_fisica_final, self.Area_tierra_fisica_final, self.indice_tierra_fisica_aislada, self.calibre_tierra_fisica_aislada, self.Area_tierra_fisica_aislada = self.calculo_eleccion_cable_tierra_fisica(self.indice_tierra_fisica, self.calibre_tierra_fisica, self.Area_tierra_fisica, self.indice_tierra_fisica_corregida, self.calibre_tierra_fisica_corregida, self.Area_tierra_fisica_corregida, self.indice_cable_fase, self.calibre_cable_fase, self.Area_cable_fase, self.canalizacion, self.adicionar_tierra_fisica_aislada)
+        self.indice_tierra_fisica_final, self.calibre_tierra_fisica_final, self.Area_tierra_fisica_final, self.indice_tierra_fisica_aislada, self.calibre_tierra_fisica_aislada, self.Area_tierra_fisica_aislada = self.calculo_eleccion_cable_tierra_fisica(self.indice_tierra_fisica, self.calibre_tierra_fisica, self.Area_tierra_fisica, self.indice_tierra_fisica_corregida, self.calibre_tierra_fisica_corregida_caida, self.Area_tierra_fisica_corregida_caida, self.indice_cable_fase, self.calibre_cable_fase, self.Area_cable_fase, self.canalizacion, self.adicionar_tierra_fisica_aislada)
 
         ''' NEUTRO '''
         self.Icorregida_factor_ampacidad_cable_neutro = self.calculo_Icorregida_factor_ampacidad_cable(self.Inominal_neutro, self.factor_ampacidad_cable_neutro)
@@ -121,10 +121,12 @@ class Carga(calculos.Calculos):
         'Inominal_fase': self.Inominal_fase,
         'Inominal_neutro': self.Inominal_neutro,
         'Icorregida_factor_ampacidad_cable_fase': self.Icorregida_factor_ampacidad_cable_fase,
+        'Icorregida_factor_ampacidad_cable_neutro': self.Icorregida_factor_ampacidad_cable_neutro,
         'Carga_corregida_factor_utilizacion_carga': self.Carga_corregida_factor_utilizacion_carga,
         'Carga_corregida_factor_simultaneidad_carga': self.Carga_corregida_factor_simultaneidad_carga,
         'numero_conductores_por_fase': self.numero_conductores_por_fase,
         'numero_conductores_neutro': self.numero_conductores_neutro,
+        'factor_Inominal_fase_aplicado_neutro': self.factor_Inominal_fase_aplicado_neutro,
         'conductores_activos_canalizacion': self.conductores_activos_canalizacion,
         'Interruptor': self.Interruptor,
         'porcentaje_utilizacion_Interruptor': self.porcentaje_utilizacion_Interruptor,
@@ -142,9 +144,9 @@ class Carga(calculos.Calculos):
         'calibre_tierra_fisica': self.calibre_tierra_fisica, 
         'Area_tierra_fisica': self.Area_tierra_fisica,
         'factor_correccion_cable_tierra_fisica': self.factor_correccion_cable_tierra_fisica,
-        'Area_tierra_fisica_corregida_ideal': self.Area_tierra_fisica_corregida_ideal,
-        'calibre_tierra_fisica_corregida': self.calibre_tierra_fisica_corregida,
-        'Area_tierra_fisica_corregida': self.Area_tierra_fisica_corregida,
+        'Area_tierra_fisica_corregida_caida_ideal': self.Area_tierra_fisica_corregida_caida_ideal,
+        'calibre_tierra_fisica_corregida_caida': self.calibre_tierra_fisica_corregida_caida,
+        'Area_tierra_fisica_corregida_caida': self.Area_tierra_fisica_corregida_caida,
         'calibre_tierra_fisica_final': self.calibre_tierra_fisica_final,
         'Area_tierra_fisica_final': self.Area_tierra_fisica_final,
         'calibre_tierra_fisica_aislada': self.calibre_tierra_fisica_aislada,
