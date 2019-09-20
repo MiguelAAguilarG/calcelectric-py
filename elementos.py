@@ -17,6 +17,7 @@ class Carga(calculos.Calculos):
         self.factor_utilizacion_carga = self.datos_entrada['factor_utilizacion_carga']
         self.factor_simultaneidad_carga = self.datos_entrada['factor_simultaneidad_carga']
         self.Interruptor_forzado = self.datos_entrada['Interruptor_forzado']
+        self.factor_Inominal_Interruptor = self.datos_entrada['factor_Inominal_Interruptor']
         self.tipo_circuito = self.datos_entrada['tipo_circuito']
         self.caida_tension = self.datos_entrada['caida_tension']
         self.Longitud = self.datos_entrada['Longitud']
@@ -55,9 +56,9 @@ class Carga(calculos.Calculos):
 
         self.Icorregida_factor_ampacidad_cable_fase = self.calculo_Icorregida_factor_ampacidad_cable(self.Inominal_fase, self.factor_ampacidad_cable_fase)
 
-        self.conductores_activos_canalizacion, self.numero_conductores_por_fase, self.numero_conductores_neutro = self.calculo_conductores_activos_canalizacion(self.conductores_activos_adicionales_misma_canalizacion, self.misma_canalizacion, self.lineas, self.numero_conductores_por_fase, self.neutro_activo_factor_agrupamiento, self.numero_conductores_neutro, self.Inominal_fase, self.Inominal_neutro)
+        self.conductores_activos_canalizacion, self.numero_conductores_por_fase, self.numero_conductores_neutro, self.neutro_activo_factor_agrupamiento = self.calculo_conductores_activos_canalizacion(self.conductores_activos_adicionales_misma_canalizacion, self.misma_canalizacion, self.lineas, self.numero_conductores_por_fase, self.neutro_activo_factor_agrupamiento, self.numero_conductores_neutro, self.Inominal_fase, self.Inominal_neutro)
 
-        self.Interruptor, self.porcentaje_utilizacion_Interruptor = self.calculo_Interruptor(self.Inominal_fase, self.Interruptor_forzado, self.factor_utilizacion_interruptor, tablas.Tablas.Interruptores_tabla)
+        self.Interruptor, self.porcentaje_utilizacion_Interruptor = self.calculo_Interruptor(self.Inominal_fase, self.Interruptor_forzado, self.factor_utilizacion_interruptor, tablas.Tablas.Interruptores_tabla, self.factor_Inominal_Interruptor)
         ####################
         self.tabla_ampacidad_dict = tablas.Tablas.Ampacidad_tabla_310_15_b16
         self.parte_adecuada_tabla_ampacidad_dict = self.tabla_ampacidad_dict['datos']['material_conductor'][self.material_conductor]['Taislante']
@@ -69,7 +70,7 @@ class Carga(calculos.Calculos):
         
         ''' Calculo de cable de fase'''
 
-        self.indice_ampacidad_fase, self.calibre_ampacidad_fase, self.Area_ampacidad_fase, self.Ampacidad_fase, self.Ampacidad_corregida_fase = self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.parte_adecuada_tabla_ampacidad_dict, self.Taislante, self.Tterminales, self.factor_agrupamiento, self.factor_temperatura, self.Interruptor, self.numero_conductores_por_fase,self.Tambiente_tabla_factor_temperatura, self.Tambiente, self.Icorregida_factor_ampacidad_cable_fase, 'fase')
+        self.indice_ampacidad_fase, self.calibre_ampacidad_fase, self.Area_ampacidad_fase, self.Ampacidad_fase, self.Ampacidad_corregida_fase = self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.parte_adecuada_tabla_ampacidad_dict, self.Taislante, self.Tterminales, self.factor_agrupamiento, self.factor_temperatura, self.Interruptor, self.numero_conductores_por_fase,self.Tambiente_tabla_factor_temperatura, self.Tambiente, self.Icorregida_factor_ampacidad_cable_fase, self.factor_Inominal_Interruptor, 'fase')
         ####################
         self.tabla_caida_resistencia_adecuada_lista = tablas.Tablas.impedancia_tabla_9['datos']['resistencia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]
         self.tabla_caida_reactancia_adecuada_lista = tablas.Tablas.impedancia_tabla_9['datos']['reactancia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]
@@ -107,7 +108,7 @@ class Carga(calculos.Calculos):
         
         ''' Calculo de cable neutro '''
 
-        self.indice_ampacidad_neutro, self.calibre_ampacidad_neutro, self.Area_ampacidad_neutro, self.Ampacidad_neutro, self.Ampacidad_corregida_neutro = self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.parte_adecuada_tabla_ampacidad_dict, self.Taislante, self.Tterminales, self.factor_agrupamiento, self.factor_temperatura, self.Interruptor, self.numero_conductores_neutro,self.Tambiente_tabla_factor_temperatura, self.Tambiente, self.Icorregida_factor_ampacidad_cable_neutro, 'neutro')
+        self.indice_ampacidad_neutro, self.calibre_ampacidad_neutro, self.Area_ampacidad_neutro, self.Ampacidad_neutro, self.Ampacidad_corregida_neutro = self.calculo_cable_ampacidad(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.parte_adecuada_tabla_ampacidad_dict, self.Taislante, self.Tterminales, self.factor_agrupamiento, self.factor_temperatura, self.Interruptor, self.numero_conductores_neutro,self.Tambiente_tabla_factor_temperatura, self.Tambiente, self.Icorregida_factor_ampacidad_cable_neutro, self.factor_Inominal_Interruptor, 'neutro')
 
         ''' Elección de cable de neutro'''
 

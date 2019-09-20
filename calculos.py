@@ -53,7 +53,7 @@ class Calculos():
                 Inominal_fase = Carga/(sqrt(3)*Voltaje*fp)
                 Inominal_neutro = 0
 
-        Inominal_neutro = Inominal_neutro + Inominal_fase*factor_Inominal_fase_aplicado_neutro
+        Inominal_neutro = Inominal_fase*factor_Inominal_fase_aplicado_neutro
 
         return Inominal_fase, Inominal_neutro
     
@@ -87,34 +87,38 @@ class Calculos():
                 print('Precaución: Inominal_fase >= Inominal_neutro\npero numero_conductores_por_fase diferente a numero_conductores_neutro')
                 print('Se precedio a numero_conductores_neutro = numero_conductores_por_fase\n')
                 numero_conductores_neutro = numero_conductores_por_fase
+            if neutro_activo == False:
+                print('Precaución: neutro_activo == False, pero Inominal_neutro >= Inominal_fase')
+                print('Se precedio a neutro_activo == True\n')
+                neutro_activo = True
 
         if misma_canalizacion == True:
             conductores_activos_canalizacion = lineas*numero_conductores_por_fase + int(neutro_activo)*numero_conductores_neutro + conductores_adicionales_totales
         elif misma_canalizacion == False:
-            if numero_conductores_neutro/lineas > 1:
-                conductores_activos_canalizacion = lineas + int(neutro_activo)*ceil(numero_conductores_neutro/lineas) + conductores_adicionales_totales
-            else:
-                conductores_activos_canalizacion = lineas + int(neutro_activo)*int(numero_conductores_neutro/lineas) + conductores_adicionales_totales
+            conductores_activos_canalizacion = lineas + int(neutro_activo)*ceil(numero_conductores_neutro/numero_conductores_por_fase) + conductores_adicionales_totales
 
-        return conductores_activos_canalizacion, numero_conductores_por_fase, numero_conductores_neutro
+        return conductores_activos_canalizacion, numero_conductores_por_fase, numero_conductores_neutro, neutro_activo
 
-    def calculo_Interruptor(self, Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores):
+    def calculo_Interruptor(self, Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores, factor_Inominal_Interruptor):
         '''Interruptores = tablas.Tablas.Interruptores_tabla\nSe puede cambiar\nfactor_error_Interruptor = 0.01\nSe pude cambiar'''
         
-        def calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores):
+        def calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores, factor_Inominal_Interruptor):
             for x, Interruptor in enumerate(Interruptores):
                 if Interruptor > 800:
                     self.factor_error_Interruptor = 0
-                if Inominal <= Interruptor*(factor_utilizacion_interruptor - self.factor_error_Interruptor):
+                if Inominal <= Interruptor*(factor_utilizacion_interruptor - self.factor_error_Interruptor) and factor_Inominal_Interruptor <= 1/factor_utilizacion_interruptor:
+                    porcentaje_utilizacion_Interruptor = Inominal*100/Interruptor
+                    return Interruptor, porcentaje_utilizacion_Interruptor
+                elif Inominal*factor_Inominal_Interruptor <= Interruptor*(1 - self.factor_error_Interruptor) and factor_Inominal_Interruptor > 1/factor_utilizacion_interruptor:
                     porcentaje_utilizacion_Interruptor = Inominal*100/Interruptor
                     return Interruptor, porcentaje_utilizacion_Interruptor
             else:
                 print('!ERROR!. No se encontro un interruptor tan grande. Aumenta el nivel de voltaje para esa carga')
 
         if Interruptor_forzado == 0:
-            Interruptor, porcentaje_utilizacion_Interruptor = calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores)
+            Interruptor, porcentaje_utilizacion_Interruptor = calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores, factor_Inominal_Interruptor)
         else:
-            if Inominal <= Interruptor_forzado*(factor_utilizacion_interruptor - factor_error_Interruptor):
+            if Inominal <= Interruptor_forzado*(factor_utilizacion_interruptor - self.factor_error_Interruptor):
                     Interruptor = Interruptor_forzado
                     porcentaje_utilizacion_Interruptor = Inominal*100/Interruptor
             else:
@@ -144,7 +148,7 @@ class Calculos():
 
         return factor_agrupamiento
 
-    def calculo_cable_ampacidad(self, calibres_tabla, Area_conductor_tabla, parte_adecuada_tabla_ampacidad_dict, Taislante, Tterminales, factor_agrupamiento, factor_temperatura, Interruptor, numero_conductores_por, Tambiente_tabla_factor_temperatura, Tambiente, Icorregida_factor_ampacidad_cable, palabra_control):
+    def calculo_cable_ampacidad(self, calibres_tabla, Area_conductor_tabla, parte_adecuada_tabla_ampacidad_dict, Taislante, Tterminales, factor_agrupamiento, factor_temperatura, Interruptor, numero_conductores_por, Tambiente_tabla_factor_temperatura, Tambiente, Icorregida_factor_ampacidad_cable, factor_Inominal_Interruptor, palabra_control):
 
         Ampacidad_tabla_Taislante = parte_adecuada_tabla_ampacidad_dict[Taislante]
         Ampacidad_tabla_Tterminales = parte_adecuada_tabla_ampacidad_dict[Tterminales]
@@ -158,17 +162,16 @@ class Calculos():
         while True:
             for indice, Ampacidad_corregida in enumerate(Ampacidad_corregida_tabla):
                 if palabra_control == 'fase':
-                    if Ampacidad_corregida >= Interruptor/numero_conductores_por:
-                        condicion = True
-                    else:
-                        condicion = False
+                    if Ampacidad_corregida >= Interruptor/numero_conductores_por and factor_Inominal_Interruptor <= 1:
+                        if Ampacidad_corregida >= Icorregida_factor_ampacidad_cable/numero_conductores_por and factor_Inominal_Interruptor <= 1:
+                            condicion = True
+                    elif Ampacidad_corregida >= Icorregida_factor_ampacidad_cable/numero_conductores_por and factor_Inominal_Interruptor >= 1:
+                            condicion = True
                 elif palabra_control == 'neutro':
                     if numero_conductores_por == 0:
                         return False, False, False, False, False
                     elif Ampacidad_corregida >= Icorregida_factor_ampacidad_cable/numero_conductores_por:
                         condicion = True
-                    else:
-                        condicion = False
 
                 if condicion == True:
 
