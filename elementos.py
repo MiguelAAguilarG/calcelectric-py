@@ -151,7 +151,6 @@ class Carga(calculos.Calculos):
         'Area_tierra_fisica_final': self.Area_tierra_fisica_final,
         'calibre_tierra_fisica_aislada': self.calibre_tierra_fisica_aislada,
         'Area_tierra_fisica_aislada': self.Area_tierra_fisica_aislada,
-        'Icorregida_factor_ampacidad_cable_neutro': self.Icorregida_factor_ampacidad_cable_neutro,
         'calibre_ampacidad_neutro': self.calibre_ampacidad_neutro, 
         'Area_ampacidad_neutro': self.Area_ampacidad_neutro, 
         'Ampacidad_neutro': self.Ampacidad_neutro, 
