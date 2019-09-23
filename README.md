@@ -1,7 +1,7 @@
 # calcelectric-py
 Ultima versión y se espera general para cálculos eléctricos
 
-# Cómo hacer un cálculo
+## Cómo hacer un cálculo
 
 - Para hacer un cálculo primero debes de leer datos.datos_entrada_descripcion_dict pra comprender los datos que se introducen para hacer un cálculo
 
