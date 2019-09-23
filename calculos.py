@@ -31,10 +31,12 @@ class Calculos():
     
     def calculo_Inominal(self, Sistema, lineas, numero_conductores_neutro, Carga, Voltaje, fp,factor_Inominal_fase_aplicado_neutro):
 
+        control_factor_Inominal_fase_aplicado_neutro = False
         if Sistema == 'monofasico':
             if lineas == 1:
                 Inominal_fase = Carga/(Voltaje*fp)
                 Inominal_neutro = Inominal_fase
+                control_factor_Inominal_fase_aplicado_neutro = True
             elif lineas == 2:
                 Inominal_fase = Carga/(Voltaje*fp)
                 Inominal_neutro = 0
@@ -42,10 +44,12 @@ class Calculos():
             if lineas == 1:
                 Inominal_fase = Carga/(Voltaje/sqrt(3)*fp)
                 Inominal_neutro = Inominal_fase
+                control_factor_Inominal_fase_aplicado_neutro = True
             elif lineas == 2:
                 if numero_conductores_neutro > 0:
                     Inominal_fase = (Carga/2)/(Voltaje/sqrt(3)*fp)
                     Inominal_neutro = Inominal_fase
+                    control_factor_Inominal_fase_aplicado_neutro = True
                 else:
                     Inominal_fase = Carga/(Voltaje*fp)
                     Inominal_neutro = 0
@@ -53,9 +57,13 @@ class Calculos():
                 Inominal_fase = Carga/(sqrt(3)*Voltaje*fp)
                 Inominal_neutro = 0
 
+        if control_factor_Inominal_fase_aplicado_neutro == True and factor_Inominal_fase_aplicado_neutro < 1:
+            print("Se procedio a factor_Inominal_fase_aplicado_neutro = 1. Ya que Inominal_neutro = Inominal_fase y factor_Inominal_fase_aplicado_neutro < 1\n")
+            factor_Inominal_fase_aplicado_neutro = 1
+        
         Inominal_neutro = Inominal_fase*factor_Inominal_fase_aplicado_neutro
 
-        return Inominal_fase, Inominal_neutro
+        return Inominal_fase, Inominal_neutro, factor_Inominal_fase_aplicado_neutro
     
     def calculo_Icorregida_factor_ampacidad_cable(self, Inominal, factor_ampacidad_cable):
         '''Nota calculos.Calculos.calculo_Icorregida_factor_ampacidad_cable:\nLa ampacidad del cable se determino con un factor de 1.25,\npara cambiar este factor de ampacidad (corriente máxima) del cable, agregar a los datos, ejemplo:\ndatos_por_defecto_Calculos_dict = {{'factor_ampacidad_cable': 1.0}}\nclase = calculos.Calculos(datos_por_defecto_Calculos_dict)\nclase = elementos.Carga(datos_por_defecto_Calculos_dict)'''
@@ -161,6 +169,15 @@ class Calculos():
         condicion = False
         while True:
             for indice, Ampacidad_corregida in enumerate(Ampacidad_corregida_tabla):
+
+                control_mensaje = False
+                if Taislante > Tterminales and (factor_agrupamiento != 1 or Tambiente_tabla_factor_temperatura != Tambiente):
+
+                    if Ampacidad_corregida > Ampacidad_tabla_Tterminales[indice]:
+                        Ampacidad = Ampacidad_corregida
+                        Ampacidad_corregida = Ampacidad_tabla_Tterminales[indice]
+                        control_mensaje = True
+
                 if palabra_control == 'fase':
                     if Ampacidad_corregida >= Interruptor/numero_conductores_por and factor_Inominal_Interruptor <= 1:
                         if Ampacidad_corregida >= Icorregida_factor_ampacidad_cable/numero_conductores_por and factor_Inominal_Interruptor <= 1:
@@ -175,19 +192,15 @@ class Calculos():
 
                 if condicion == True:
 
+                    if control_mensaje:
+                        print(palabra_control)
+                        print('Se tomo como Ampacidad_corregida la Ampacidad de Tterminales, ya que la Ampacidad_corregida de Taislante > Ampacidad de Tterminales. 110-14(c)(1)\n')
+
                     indice_ampacidad = indice
                     calibre_ampacidad = calibres_tabla[indice]
                     Area_ampacidad = Area_conductor_tabla[indice]
                     Ampacidad = Ampacidad_tabla[indice]
                     Ampacidad_corregida = Ampacidad_corregida
-
-                    if Taislante > Tterminales and (factor_agrupamiento != 1 or Tambiente_tabla_factor_temperatura != Tambiente):
-
-                        if Ampacidad_corregida > Ampacidad_tabla_Tterminales[indice]:
-                            print(palabra_control)
-                            print('Se tomo como Ampacidad_corregida la Ampacidad de Tterminales, ya que la Ampacidad_corregida de Taislante > Ampacidad de Tterminales. 110-14(c)(1)\n')
-                            Ampacidad = Ampacidad_corregida
-                            Ampacidad_corregida = Ampacidad_tabla_Tterminales[indice]
 
                     return indice_ampacidad, calibre_ampacidad, Area_ampacidad, Ampacidad, Ampacidad_corregida
             else:

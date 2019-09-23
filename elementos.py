@@ -50,7 +50,7 @@ class Carga(calculos.Calculos):
 
         self.Carga = self.Carga_corregida_factor_simultaneidad_carga
 
-        self.Inominal_fase, self.Inominal_neutro = self.calculo_Inominal(self.Sistema, self.lineas, self.numero_conductores_neutro, self.Carga, self.Voltaje, self.fp, self.factor_Inominal_fase_aplicado_neutro)
+        self.Inominal_fase, self.Inominal_neutro, self.factor_Inominal_fase_aplicado_neutro = self.calculo_Inominal(self.Sistema, self.lineas, self.numero_conductores_neutro, self.Carga, self.Voltaje, self.fp, self.factor_Inominal_fase_aplicado_neutro)
 
         ''' FASE '''
 
@@ -74,7 +74,6 @@ class Carga(calculos.Calculos):
         ####################
         self.tabla_caida_resistencia_adecuada_lista = tablas.Tablas.impedancia_tabla_9['datos']['resistencia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]
         self.tabla_caida_reactancia_adecuada_lista = tablas.Tablas.impedancia_tabla_9['datos']['reactancia']['material_conductor'][self.material_conductor]['material_canalizacion'][self.material_canalizacion]
-
         ####################
         self.indice_caida_fase, self.calibre_caida_fase, self.Area_caida_fase, self.caida_tension_calculada = self.calculo_cable_caida_de_tension(tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_caida_resistencia_adecuada_lista, self.tabla_caida_reactancia_adecuada_lista, self.caida_tension, self.Sistema, self.lineas, self.fp, self.Longitud, self.Inominal_fase, self.Voltaje, self.numero_conductores_por_fase)
 
