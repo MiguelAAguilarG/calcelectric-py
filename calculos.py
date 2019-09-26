@@ -131,7 +131,7 @@ class Calculos():
                     porcentaje_utilizacion_Interruptor = Inominal*100/Interruptor
             else:
                 print('!ERROR!. Amperaje del Interruptor forzado menor a la Icorregida. Se procedio a calcular otro interruptor y porcentaje_utilizacion_Interruptor')
-                Interruptor, porcentaje_utilizacion_Interruptor = calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores)
+                Interruptor, porcentaje_utilizacion_Interruptor = calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores, factor_Inominal_Interruptor)
         
         return Interruptor, porcentaje_utilizacion_Interruptor
 
