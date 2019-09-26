@@ -1,4 +1,4 @@
-from math import sqrt, sin, acos, floor, ceil
+from math import sqrt, pi, sin, acos, floor, ceil
 import tablas
 
 class Calculos():
@@ -449,10 +449,10 @@ class Calculos():
         else:
             numero_tierra_fisica_aislada = 0
 
-        if lineas == 2:
+        if lineas == 2 or lineas == 3:
             calibre_cable_fase_L2 = calibre_cable_fase
             numero_conductores_por_fase_L2 = numero_conductores_por_fase
-        elif lineas == 3:
+        if lineas == 3:
             calibre_cable_fase_L3 = calibre_cable_fase
             numero_conductores_por_fase_L3 = numero_conductores_por_fase
         else:
@@ -487,13 +487,13 @@ class Calculos():
             neutro = {'forrados': {calibre_cable_neutro: ceil(numero_conductores_neutro/numero_conductores_por_fase)}}
 
         if misma_canalizacion == True:
-            fase = {'forrados': {calibre_cable_fase: lineas}}
-        elif misma_canalizacion == False:
             fase = {'forrados': {calibre_cable_fase: lineas*numero_conductores_por_fase}}
+        elif misma_canalizacion == False:
+            fase = {'forrados': {calibre_cable_fase: lineas}}
 
         lista_diccionarios = [forrados, desnudos, tierra_fisica_aislada, tierra_fisica_final, neutro, fase]
 
-        conductores_canalizacion = {'forrados':{}, 'desnudos': {}}
+        conductores_canalizacion_totales = {'forrados':{}, 'desnudos': {}}
         for diccionario in lista_diccionarios:
 
             if 'forrados' in diccionario:
@@ -504,79 +504,71 @@ class Calculos():
                 continue
 
             for key, value in diccionario[palabra].items():
-                if key in conductores_canalizacion[palabra]:
-                    conductores_canalizacion[palabra].update({key: conductores_canalizacion[palabra][key] + value})
+                if key in conductores_canalizacion_totales[palabra]:
+                    conductores_canalizacion_totales[palabra].update({key: conductores_canalizacion_totales[palabra][key] + value})
                 else:
-                    conductores_canalizacion[palabra].update({key: value})
+                    conductores_canalizacion_totales[palabra].update({key: value})
 
-        return conductores_canalizacion
+        return conductores_canalizacion_totales
 
-''' def calculo_Area_conductores(self):
+    def calculo_Area_conductores(self, conductores_canalizacion_totales, calibres_tabla, Area_conductor_tabla, tabla_dimensiones_cables_adecuada_lista):
+        
+        Area_conductores_forrados = 0
+        for calibre_conductores_canalizacion_totales, numero in conductores_canalizacion_totales['forrados'].items():
+            for indice_calibre, calibre in enumerate(calibres_tabla):
+                if calibre == calibre_conductores_canalizacion_totales:
+                    dimension = tabla_dimensiones_cables_adecuada_lista[indice_calibre]
+            
+                    Area_conductores = pi*((dimension/2)**2)*numero
+                    Area_conductores_forrados = Area_conductores_forrados + Area_conductores  
+                    break
 
-        for indice_conduit, conduit in enumerate(tabla_conduit_adecuada_lista):
+        Area_conductores_desnudos = 0
+        for calibre_conductores_canalizacion_totales, numero in conductores_canalizacion_totales['desnudos'].items():
+            for indice_calibre, calibre in enumerate(calibres_tabla):
+                if calibre == calibre_conductores_canalizacion_totales:
+            
+                    Area_conductores = Area_conductor_tabla[indice_calibre]*numero
+                    Area_conductores_desnudos = Area_conductores_desnudos + Area_conductores
+                    break
 
+        Area_conductores = Area_conductores_forrados + Area_conductores_desnudos
 
-        if tabla_conduit_adecuada_lista
-            indice_cable_fase = indice_ampacidad
-            calibre_cable_fase = calibre_ampacidad
-            Area_cable_fase = Area_ampacidad
-        else:
-            indice_cable_fase = indice_caida
-            calibre_cable_fase = calibre_caida
-            Area_cable_fase = Area_caida
+        return Area_conductores
 
-        return indice_cable_fase, calibre_cable_fase, Area_cable_fase
+    def calculo_conduit(self, Area_conductores, conductores_canalizacion_totales, tipo_conduit, dimensiones_tubo_conduit_tabla_4, porcentaje_llenado_conduit_tabla_1, conduit_pulg_forzado):
 
-    def calculo_dimension_conduit(self, tabla_conduit_adecuada_lista, indice_ampacidad, calibre_cable_fase = calibre_ampacidad
-                Area_cable_fase = Area_ampacidad
-            else:
-                indice_cable_fase = indice_caida
-                calibre_cable_fase = calibre_caida
-                Area_cable_fase = Area_caida):
+        for conductores, porcentaje in porcentaje_llenado_conduit_tabla_1.items():
+            if conductores_canalizacion_totales <= conductores:
+                break
 
-        for indice_conduit, conduit in enumerate(tabla_conduit_adecuada_lista):
+        control = False
+        if conduit_pulg_forzado != False:
+            indice_dimension_conduit = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_in'].index(conduit_pulg_forzado)
+            dimension_conduit = dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit'][tipo_conduit][indice_dimension_conduit]
 
-            if tabla_conduit_adecuada_lista
-                indice_cable_fase = indice_ampacidad
-                calibre_cable_fase = calibre_ampacidad
-                Area_cable_fase = Area_ampacidad
-            else:
-                indice_cable_fase = indice_caida
-                calibre_cable_fase = calibre_caida
-                Area_cable_fase = Area_caida
+            Area_conduit = pi*((dimension_conduit/2)**2)
+            porcentaje_llenado_conduit = Area_conductores*100/Area_conduit
+            if  porcentaje_llenado_conduit <= porcentaje:
+                medida_conduit_in = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_in'][indice_dimension_conduit]
+                medida_conduit_mm = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_mm'][indice_dimension_conduit]
+                control = True
+            if control == False:
+                print(f'!ERROR. Se procedio a calcular otro tamaño de conduit, ya que porcentaje_llenado_conduit calculado = {porcentaje_llenado_conduit}% no cumple con porcentaje_llenado_conduit tabla = {porcentaje}%\n')
 
-        return indice_cable_fase, calibre_cable_fase, Area_cable_fase'''
-
-    
-
+        if control == False:
+            for indice_dimension_conduit, dimension_conduit in enumerate(dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit'][tipo_conduit]):
+                
+                Area_conduit = pi*((dimension_conduit/2)**2)
+                porcentaje_llenado_conduit = Area_conductores*100/Area_conduit
+                if  porcentaje_llenado_conduit <= porcentaje:
+                    medida_conduit_in = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_in'][indice_dimension_conduit]
+                    medida_conduit_mm = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_mm'][indice_dimension_conduit]
+                    break
+                    
+        return porcentaje_llenado_conduit, medida_conduit_in, medida_conduit_mm, Area_conduit
+ 
 '''
-for n=1:length(calibre_tabla)
-  if cell2mat(tierra) == cell2mat(calibre_tabla(n))
-  aux_3 = n;
-  
-  if canalizacion == 2 && aux_3 <=5
-  disp('NOTA. Tierra fisica forzada a calibre 4 por estar en charola');
-  aux_3 = 6;  
-  end
-  
-  break
-  end
-end
-Area_cable = conductores_canalizacion*Area_cable_tablas(aux_2)+Area_cable_tablas(aux_3);
-%///////////////////////////////////////////////////////////////////////////////
-%///////////////////////////////////////////////////////////////////////////////
-ancho_charola_tablas = [50 100 150 200 225 300 400 450 500 600 750 900];
-charola_columna1 = [1400 2800 4200 5600 6100 8400 11200 12600 14000 16800 21000 25200];
-if canalizacion == 2
-  
-if Sistema == 1
-  suma_diametros = 1*numero_conductores*Diametro_cable_tablas(aux_2) + neutro*numero_conductores*Diametro_cable_tablas(aux_2) + Diametro_cable_tablas(aux_3);
-  suma_area = 1*numero_conductores*Area_cable_tablas(aux_2) + neutro*numero_conductores*Area_cable_tablas(aux_2) + Area_cable_tablas(aux_3);
-elseif Sistema == 3
-  suma_diametros = 3*numero_conductores*Diametro_cable_tablas(aux_2) + neutro*numero_conductores*Diametro_cable_tablas(aux_2) + Diametro_cable_tablas(aux_3);
-  suma_area = 3*numero_conductores*Area_cable_tablas(aux_2) + neutro*numero_conductores*Area_cable_tablas(aux_2) + Area_cable_tablas(aux_3);
-end
-
 %///////////////////////////////////////////////////////////////////////////////
   if aux_2 >= 24 && aux_3 >= 24
     condicion = 'a';
@@ -598,7 +590,7 @@ end
 %///////////////////////////////////////////////////////////////////////////////
   elseif aux_2 >= 24 && aux_3 < 24
     condicion = 'c';
-    Sd = Diametro_cable_tablas(aux_2)*conductores_canalizacion;
+    Sd = Diametro_cable_tablas(aux_2)*conductores_canalizacion_totales;
     charola_columna2 = charola_columna1 - 28*Sd;
     for n=1:length(ancho_charola_tablas)
       if suma_area <= charola_columna2(n)

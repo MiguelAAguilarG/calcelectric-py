@@ -34,6 +34,7 @@ class Carga(calculos.Calculos):
         self.adicionar_tierra_fisica_aislada = self.datos_entrada['adicionar_tierra_fisica_aislada']
         self.canalizacion = self.datos_entrada['canalizacion']
         self.tipo_conduit = self.datos_entrada['tipo_conduit']
+        self.conduit_pulg_forzado = self.datos_entrada['conduit_pulg_forzado']
         self.material_canalizacion = self.datos_entrada['material_canalizacion']
         self.misma_canalizacion = self.datos_entrada['misma_canalizacion']
         self.conductores_activos_adicionales_misma_canalizacion = self.datos_entrada['conductores_activos_adicionales_misma_canalizacion']
@@ -120,8 +121,25 @@ class Carga(calculos.Calculos):
         self.conductores_canalizacion = self.calculo_conductores_canalizacion(self.lineas, self.numero_conductores_por_fase, self.calibre_cable_fase, self.numero_conductores_neutro, self.calibre_cable_neutro, self.tierra_fisica_forrada, self.calibre_tierra_fisica_final, self.adicionar_tierra_fisica_aislada, self.calibre_tierra_fisica_aislada, self.misma_canalizacion, self.conductores_activos_adicionales_misma_canalizacion, self.conductores_no_activos_adicionales_misma_canalizacion)
 
         ####################
-        self.tabla_conduit_adecuada_lista = tablas.Tablas.dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit'][self.tipo_conduit]
+        for key, value in tablas.Tablas.dimensiones_cables_tabla_5['datos']['aislante_condutor'].items():
+            lista_key_aislante_conductor = key.split(',')
+            lista_key_aislante_conductor = [x.strip() for x in lista_key_aislante_conductor]
+            if self.aislante_conductor in lista_key_aislante_conductor:
+                self.tabla_dimensiones_cables_adecuada_lista = tablas.Tablas.dimensiones_cables_tabla_5['datos']['aislante_condutor'][key]
+                break
         ####################
+
+        self.Area_conductores = self.calculo_Area_conductores(self.conductores_canalizacion, tablas.Tablas.calibres_tabla, tablas.Tablas.Area_conductor_tabla, self.tabla_dimensiones_cables_adecuada_lista)
+
+        ####################
+        self.conductores_canalizacion_totales = 0
+        for numero_conductores in self.conductores_canalizacion['forrados'].values():
+            self.conductores_canalizacion_totales = self.conductores_canalizacion_totales + numero_conductores
+        for numero_conductores in self.conductores_canalizacion['desnudos'].values():
+            self.conductores_canalizacion_totales = self.conductores_canalizacion_totales + numero_conductores
+        ####################
+
+        self.porcentaje_llenado_conduit, self.medida_conduit_in, self.medida_conduit_mm, self.Area_conduit = self.calculo_conduit(self.Area_conductores, self.conductores_canalizacion_totales, self.tipo_conduit, tablas.Tablas.dimensiones_tubo_conduit_tabla_4, tablas.Tablas.porcentaje_llenado_conduit_tabla_1, self.conduit_pulg_forzado)
 
         self.datos_salida_dict = {
         'Inominal_fase': self.Inominal_fase,
@@ -165,6 +183,11 @@ class Carga(calculos.Calculos):
         'Area_cable_neutro': self.Area_cable_neutro,
         'conductores_circuito': self.conductores_circuito,
         'conductores_canalizacion': self.conductores_canalizacion,
+        'Area_conductores': self.Area_conductores,
+        'porcentaje_llenado_conduit': self.porcentaje_llenado_conduit,
+        'medida_conduit_in': self.medida_conduit_in,
+        'medida_conduit_mm': self.medida_conduit_mm,
+        'Area_conduit': self.Area_conduit
         }
         
         print(self.datos_por_defecto_Calculos_dict,'\n')

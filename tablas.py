@@ -102,11 +102,14 @@ class Tablas():
     dimensiones_cables_tabla_5['datos']['aislante_condutor']['RHH, RHW, RHW-2'] = (4.902, 5.385, 5.994, 8.28, 9.246, 10.46, 11.18, 11.99, 14.78, 15.8, 16.97, 18.29, 19.76, 22.73, 24.13, 25.43, 26.62, 28.78, 31.57, 33.38, 34.24, 35.05, 36.68, 38.15, 43.92, 47.04, 49.94, 52.63)
     dimensiones_cables_tabla_5['datos']['aislante_condutor']['RHH*, RHW*, RHW-2*'] = (4.14, 4.623, 5.232, 6.756, 7.722, 8.941, 9.652, 10.46, 12.50, 13.51, 14.68, 16.0, 17.48, 19.43, 20.83, 22.12, 23.32, 25.48, 28.27, 30.07, 30.94, 31.75, 33.38, 34.85, 39.09, 42.21, 45.1, 47.8)
 
+    porcentaje_llenado_conduit_tabla_1 = {1: 53, 2: 31, 3: 40}
+
     dimensiones_tubo_conduit_tabla_4 = {}
     dimensiones_tubo_conduit_tabla_4['parametros'] = {'tipo_conduit': ('EMT', 'ENT', 'FMC', 'IMC', 'LFNC-A*', 'LFNC-B*', 'LFNC-C*', 'LFMC', 'RMC', 'PVC, cédula 80', 'PVC, cédula 40', 'HDPE', 'PVC, tipo A', 'PVC, tipo EB'), 'medidas_estandar': 'in/mm'}
     #############################################
     dimensiones_tubo_conduit_tabla_4['datos'] = {'medidas_estandar': {}, 'tipo_conduit': {}}
-    dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar'] = {'1/2':16, '3/4': 21, '1': 27,'1 1/4': 35, '1 1/2': 41, '2': 53, '2 1/2': 63, '3': 78, '3 1/2': 91, '4': 103 ,'5': 1296 ,'6': 155}
+    dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_in'] = ('1/2', '3/4', '1', '1 1/4', '1 1/2', '2', '2 1/2', '3', '3 1/2', '4' ,'5', '6')
+    dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_mm'] = (16, 21, 27, 35, 41, 53, 63, 78, 91, 103, 1296, 155)
     #############################################
     dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit']['EMT'] = (15.8, 20.9, 26.6, 35.1, 40.9, 52.5, 69.4, 85.2, 97.4, 110.1)
     dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit']['ENT'] = (14.2, 19.3, 25.4, 34, 39.9, 51.3)
