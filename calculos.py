@@ -437,6 +437,79 @@ class Calculos():
             else:
                 return False, False, False
 
+    def calculo_conductores_circuito(self, lineas, numero_conductores_por_fase, calibre_cable_fase, numero_conductores_neutro, calibre_cable_neutro, calibre_tierra_fisica_final, adicionar_tierra_fisica_aislada, calibre_tierra_fisica_aislada, misma_canalizacion):
+
+        if misma_canalizacion == True:
+            numero_tierra_fisica_final = 1
+        else:
+            numero_tierra_fisica_final = numero_conductores_por_fase
+
+        if adicionar_tierra_fisica_aislada == True:
+            numero_tierra_fisica_aislada = 1
+        else:
+            numero_tierra_fisica_aislada = 0
+
+        if lineas == 2:
+            calibre_cable_fase_L2 = calibre_cable_fase
+            numero_conductores_por_fase_L2 = numero_conductores_por_fase
+        elif lineas == 3:
+            calibre_cable_fase_L3 = calibre_cable_fase
+            numero_conductores_por_fase_L3 = numero_conductores_por_fase
+        else:
+            calibre_cable_fase_L2 = False
+            numero_conductores_por_fase_L2 = 0
+            calibre_cable_fase_L3 = False
+            numero_conductores_por_fase_L3 = 0
+
+        conductores_circuito = {'L1':{calibre_cable_fase: numero_conductores_por_fase}, 'L2':{calibre_cable_fase_L2: numero_conductores_por_fase_L2}, 'L3':{calibre_cable_fase_L3: numero_conductores_por_fase_L3}, 'N':{calibre_cable_neutro: numero_conductores_neutro}, 'TF':{calibre_tierra_fisica_final: numero_tierra_fisica_final}, 'TA':{calibre_tierra_fisica_aislada: numero_tierra_fisica_aislada}}
+
+        return conductores_circuito
+
+    def calculo_conductores_canalizacion(self, lineas, numero_conductores_por_fase, calibre_cable_fase, numero_conductores_neutro, calibre_cable_neutro, tierra_fisica_forrada, calibre_tierra_fisica_final, adicionar_tierra_fisica_aislada, calibre_tierra_fisica_aislada, misma_canalizacion, conductores_activos_adicionales_misma_canalizacion, conductores_no_activos_adicionales_misma_canalizacion):
+
+        forrados = {'forrados': conductores_activos_adicionales_misma_canalizacion}
+
+        desnudos = {'desnudos': conductores_no_activos_adicionales_misma_canalizacion}
+
+        if adicionar_tierra_fisica_aislada == True:
+            tierra_fisica_aislada = {'forrados': {calibre_tierra_fisica_aislada: 1}}
+        else:
+            tierra_fisica_aislada = {}
+
+        if tierra_fisica_forrada == True:
+            tierra_fisica_final = {'forrados': {calibre_tierra_fisica_final: 1}}
+        else:
+            tierra_fisica_final = {'desnudos': {calibre_tierra_fisica_final: 1}}
+
+        if misma_canalizacion == True:
+            neutro = {'forrados': {calibre_cable_neutro: numero_conductores_neutro}}
+        elif misma_canalizacion == False:
+            neutro = {'forrados': {calibre_cable_neutro: ceil(numero_conductores_neutro/numero_conductores_por_fase)}}
+
+        if misma_canalizacion == True:
+            fase = {'forrados': {calibre_cable_fase: lineas}}
+        elif misma_canalizacion == False:
+            fase = {'forrados': {calibre_cable_fase: lineas*numero_conductores_por_fase}}
+
+        lista_diccionarios = [forrados, desnudos, tierra_fisica_aislada, tierra_fisica_final, neutro, fase]
+
+        conductores_canalizacion = {'forrados':{}, 'desnudos': {}}
+        for diccionario in lista_diccionarios:
+
+            if 'forrados' in diccionario:
+                palabra = 'forrados'
+            elif 'desnudos' in diccionario:
+                palabra = 'desnudos'
+            else:
+                continue
+
+            for key, value in diccionario[palabra].items():
+                if key in conductores_canalizacion[palabra]:
+                    conductores_canalizacion[palabra].update({key: conductores_canalizacion[palabra][key] + value})
+                else:
+                    conductores_canalizacion[palabra].update({key: value})
+
+        return conductores_canalizacion
 
 ''' def calculo_Area_conductores(self):
 

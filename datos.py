@@ -11,7 +11,7 @@ datos_entrada_dict = {
 'Interruptor_forzado': 0,
 'factor_Inominal_Interruptor': 1,
 'tipo_circuito': 'derivado',
-'caida_tension': 3,
+'caida_tension': 7,
 'Longitud': 150,
 'Tambiente': 40,
 'aislante_conductor': 'THHW',

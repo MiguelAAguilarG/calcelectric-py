@@ -113,6 +113,12 @@ class Carga(calculos.Calculos):
 
         self.indice_cable_neutro, self.calibre_cable_neutro, self.Area_cable_neutro = self.calculo_eleccion_cable_neutro(self.indice_cable_fase, self.calibre_cable_fase, self.Area_cable_fase, self.indice_ampacidad_neutro, self.calibre_ampacidad_neutro, self.Area_ampacidad_neutro, self.indice_tierra_fisica_final, self.calibre_tierra_fisica_final, self.Area_tierra_fisica_final,self.Inominal_fase, self.Inominal_neutro, self.factor_ampacidad_cable_neutro, self.tipo_circuito, self.numero_conductores_neutro)
 
+        ''' Elección canalización conduit'''
+
+        self.conductores_circuito = self.calculo_conductores_circuito(self.lineas, self.numero_conductores_por_fase, self.calibre_cable_fase, self.numero_conductores_neutro, self.calibre_cable_neutro, self.calibre_tierra_fisica_final, self.adicionar_tierra_fisica_aislada, self.calibre_tierra_fisica_aislada, self.misma_canalizacion)
+
+        self.conductores_canalizacion = self.calculo_conductores_canalizacion(self.lineas, self.numero_conductores_por_fase, self.calibre_cable_fase, self.numero_conductores_neutro, self.calibre_cable_neutro, self.tierra_fisica_forrada, self.calibre_tierra_fisica_final, self.adicionar_tierra_fisica_aislada, self.calibre_tierra_fisica_aislada, self.misma_canalizacion, self.conductores_activos_adicionales_misma_canalizacion, self.conductores_no_activos_adicionales_misma_canalizacion)
+
         ####################
         self.tabla_conduit_adecuada_lista = tablas.Tablas.dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit'][self.tipo_conduit]
         ####################
@@ -157,6 +163,8 @@ class Carga(calculos.Calculos):
         'Ampacidad_corregida_neutro': self.Ampacidad_corregida_neutro,
         'calibre_cable_neutro': self.calibre_cable_neutro, 
         'Area_cable_neutro': self.Area_cable_neutro,
+        'conductores_circuito': self.conductores_circuito,
+        'conductores_canalizacion': self.conductores_canalizacion,
         }
         
         print(self.datos_por_defecto_Calculos_dict,'\n')
