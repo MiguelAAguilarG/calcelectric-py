@@ -9,7 +9,7 @@ Ultima versión y se espera general para cálculos eléctricos
 
 - Por último ir a datos.datos_salida_descripcion_dict para comprender la salida que te dio calcelectric-py.py
 
-##Ejemplos
+## Ejemplos
 - Un circuito derivado
 
 ### Entrada de datos
