@@ -4,15 +4,33 @@ Ultima versión y se espera general para cálculos eléctricos
 ## Cómo hacer un cálculo
 
 - Para hacer un cálculo primero debes de leer datos.datos_entrada_descripcion_dict pra comprender los datos que se introducen para hacer un cálculo
-
+```
+datos.py
+```
 - Después ir a calcelectric-py.py y leer los comentarios de como se realiza un cálculo y correr calcelectric-py.py
+```
+calcelectric-py.py
+```
+```
+#Se crea un objeto Carga que se encuentra en el módulo elementos.py
+#Por el momento no hay verificación de los datos introducidos en la Carga
 
+#Carga = elementos.Carga(datos.datos_entrada_dict, datos.datos_por_defecto_Calculos_dict)
+Carga = elementos.Carga(datos.datos_entrada_dict)
+
+#Se procede a hacer el cálculo que se desea hacer para la carga, un cálculo completo es calculo_basico, por el momento, solo hay ese cálculo completo, este esta compuesto por cálculos que se encuentran en el módulo calculos.py. calculo_basico es un método en la Clase Carga
+datos_por_defecto_Calculos_dict, datos_entrada, datos_salida_dict = Carga.calculo_basico()
+```
 - Por último ir a datos.datos_salida_descripcion_dict para comprender la salida que te dio calcelectric-py.py
+```
+datos.py
+```
 
 ## Ejemplos
-- Un circuito derivado
+1. Un circuito derivado
 
-### Entrada de datos
+#### Entrada de datos
+```
 datos_entrada_dict = {
 'Sistema': 'monofasico',
 'lineas': 1,
@@ -45,8 +63,10 @@ datos_entrada_dict = {
 'conductores_activos_adicionales_misma_canalizacion': {},
 'conductores_no_activos_adicionales_misma_canalizacion': {},
 }
+```
 
-### Salida de datos
+#### Salida de datos
+```
 {'factor_ampacidad_cable_fase': 1.25,
  'factor_ampacidad_cable_neutro': 1.25,
  'factor_error_Interruptor': 0.01,
@@ -134,3 +154,4 @@ datos_entrada_dict = {
  'numero_conductores_por_fase': 1,
  'porcentaje_llenado_conduit': 18.690530365849604,
  'porcentaje_utilizacion_Interruptor': 58.326042578011084}
+ ```
