@@ -190,7 +190,5 @@ class Carga(calculos.Calculos):
         'Area_conduit': self.Area_conduit
         }
         
-        print(self.datos_por_defecto_Calculos_dict,'\n')
-        print(self.datos_entrada,'\n')
-        print(self.datos_salida_dict,'\n')
+        return self.datos_por_defecto_Calculos_dict, self.datos_entrada, self.datos_salida_dict
 
