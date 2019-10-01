@@ -27,9 +27,10 @@ datos.py
 ```
 
 ## Ejemplos
-1. Un circuito derivado
+### Ejemplo 1
+Un circuito derivado originado de una fuente monofásica con voltaje de fase a neutro de 127 V tiene una carga de 1000 W con un factor de potencia de 0.9. Se desea hacer un cálculo simple con base en la NOM-001-SEDE/NEC. A la carga, interruptor o cable no se le aplicarán factores de correción, salvo los que pide la NOM-001-SEDE/NEC (ya vienen por defecto programados). La temperatura ambiente es de 30 °C. El circuito tendra una caída de tensión maxima de 3%, la longitud del circuito es de 50 m.  Se usará un conductor de cobre con aislante THHW, la temperatura de dicho aislante es de 75°C (de hecho debería de ser de 90°C, solo que algunos fabricantes ponen excepciones lo cual da por resultado que realmente sea de 75°C), la temperatura en terminales de la carga eléctrica es de 60 °C (véase NOM-001-SEDE. 110-14(c)(1)). Se usará un conductor desnudo de tierra física. Todos los conductores del circuito estarán en un tubo conduit EMT.
 
-#### Entrada de datos
+#### Entrada de datos. Ejemplo 1
 ```
 datos_entrada_dict = {
 'Sistema': 'monofasico',
@@ -65,7 +66,7 @@ datos_entrada_dict = {
 }
 ```
 
-#### Salida de datos
+#### Salida de datos. Ejemplo 1
 ```
 {'factor_ampacidad_cable_fase': 1.25,
  'factor_ampacidad_cable_neutro': 1.25,
