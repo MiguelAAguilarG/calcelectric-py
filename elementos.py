@@ -44,12 +44,9 @@ class Carga(calculos.Calculos):
         ####################
         self.Carga_corregida_factor_utilizacion_carga = self.calculo_Carga_corregida_factor_utilizacion_carga(self.Carga, self.factor_utilizacion_carga)
 
-        Carga_aux = self.Carga
-        self.Carga = self.Carga_corregida_factor_utilizacion_carga
+        self.Carga_corregida_factor_simultaneidad_carga = self.calculo_Carga_corregida_factor_simultaneidad_carga(self.Carga, self.factor_simultaneidad_carga)
 
-        self.Carga_corregida_factor_simultaneidad_carga = self.calculo_Carga_corregida_factor_simultaneidad_carga(Carga_aux, self.factor_simultaneidad_carga)
-
-        self.Carga = self.Carga_corregida_factor_simultaneidad_carga
+        self.Carga = self.Carga*self.factor_simultaneidad_carga*self.Carga_corregida_factor_utilizacion_carga
 
         self.Inominal_fase, self.Inominal_neutro, self.factor_Inominal_fase_aplicado_neutro = self.calculo_Inominal(self.Sistema, self.lineas, self.numero_conductores_neutro, self.Carga, self.Voltaje, self.fp, self.factor_Inominal_fase_aplicado_neutro)
 
@@ -142,6 +139,7 @@ class Carga(calculos.Calculos):
         self.porcentaje_llenado_conduit, self.medida_conduit_in, self.medida_conduit_mm, self.Area_conduit = self.calculo_conduit(self.Area_conductores, self.conductores_canalizacion_totales, self.tipo_conduit, tablas.Tablas.dimensiones_tubo_conduit_tabla_4, tablas.Tablas.porcentaje_llenado_conduit_tabla_1, self.conduit_pulg_forzado)
 
         self.datos_salida_dict = {
+        'Carga': self.Carga,
         'Inominal_fase': self.Inominal_fase,
         'Inominal_neutro': self.Inominal_neutro,
         'Icorregida_factor_ampacidad_cable_fase': self.Icorregida_factor_ampacidad_cable_fase,
