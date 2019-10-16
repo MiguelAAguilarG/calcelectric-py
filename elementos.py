@@ -46,7 +46,7 @@ class Carga(calculos.Calculos):
 
         self.Carga_corregida_factor_simultaneidad_carga = self.calculo_Carga_corregida_factor_simultaneidad_carga(self.Carga, self.factor_simultaneidad_carga)
 
-        self.Carga = self.Carga*self.factor_simultaneidad_carga*self.Carga_corregida_factor_utilizacion_carga
+        self.Carga = self.Carga*self.factor_simultaneidad_carga*self.factor_utilizacion_carga
 
         self.Inominal_fase, self.Inominal_neutro, self.factor_Inominal_fase_aplicado_neutro = self.calculo_Inominal(self.Sistema, self.lineas, self.numero_conductores_neutro, self.Carga, self.Voltaje, self.fp, self.factor_Inominal_fase_aplicado_neutro)
 
@@ -185,7 +185,7 @@ class Carga(calculos.Calculos):
         'porcentaje_llenado_conduit': self.porcentaje_llenado_conduit,
         'medida_conduit_in': self.medida_conduit_in,
         'medida_conduit_mm': self.medida_conduit_mm,
-        'Area_conduit': self.Area_conduit
+        'Area_conduit': self.Area_conduit,
         }
         
         return self.datos_por_defecto_Calculos_dict, self.datos_entrada, self.datos_salida_dict

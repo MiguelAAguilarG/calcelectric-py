@@ -16,10 +16,10 @@ if __name__ == "__main__":
     #Se procede a hacer el cálculo que se desea hacer para la carga, un cálculo completo es calculo_basico, por el momento, solo hay ese cálculo completo, este esta compuesto por cálculos que se encuentran en el módulo calculos.py. calculo_basico es un método en la Clase Carga
     datos_por_defecto_Calculos_dict, datos_entrada, datos_salida_dict = Carga.calculo_basico()
 
-    pprint(datos_por_defecto_Calculos_dict)
+    pprint(datos_por_defecto_Calculos_dict, sort_dicts = False) #sort_dicts solo disponible en python 3.8
     print('')
-    pprint(datos_entrada)
+    pprint(datos_entrada, sort_dicts = False)
     print('')
-    pprint(datos_salida_dict)
+    pprint(datos_salida_dict, sort_dicts = False)
 
 
