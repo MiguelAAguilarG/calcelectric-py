@@ -5,8 +5,8 @@ import tablas
 class Carga(calculos.Calculos):
 
 
-    def __init__(self, datos_entrada, datos_por_defecto_Calculos_dict=None):
-        super().__init__(datos_por_defecto_Calculos_dict)
+    def __init__(self, datos_entrada):
+        super().__init__()
 
         self.datos_entrada = datos_entrada
 

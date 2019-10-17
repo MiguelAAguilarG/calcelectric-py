@@ -22,5 +22,3 @@ if __name__ == "__main__":
     pprint(datos_entrada, sort_dicts=False)
     print('')
     pprint(datos_salida_dict, sort_dicts=False)
-
-
