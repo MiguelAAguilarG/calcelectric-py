@@ -4,7 +4,8 @@ import tablas
 
 class Carga(calculos.Calculos):
 
-    def __init__(self, datos_entrada, datos_por_defecto_Calculos_dict = None):
+
+    def __init__(self, datos_entrada, datos_por_defecto_Calculos_dict=None):
         super().__init__(datos_por_defecto_Calculos_dict)
 
         self.datos_entrada = datos_entrada
@@ -39,6 +40,7 @@ class Carga(calculos.Calculos):
         self.misma_canalizacion = self.datos_entrada['misma_canalizacion']
         self.conductores_activos_adicionales_misma_canalizacion = self.datos_entrada['conductores_activos_adicionales_misma_canalizacion']
         self.conductores_no_activos_adicionales_misma_canalizacion = self.datos_entrada['conductores_no_activos_adicionales_misma_canalizacion']
+
 
     def calculo_basico(self, *args, **kargs):
         ####################

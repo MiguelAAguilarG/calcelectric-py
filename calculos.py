@@ -1,9 +1,11 @@
 from math import sqrt, pi, sin, acos, floor, ceil
+
 import tablas
 
 class Calculos():
     
-    def __init__(self, datos_por_defecto_Calculos_dict = None):
+
+    def __init__(self, datos_por_defecto_Calculos_dict=None):
 
         self.datos_por_defecto_Calculos_dict = {
         'factor_utilizacion_interruptor': 0.8,
@@ -29,6 +31,7 @@ class Calculos():
         self.factor_ampacidad_cable_neutro = self.datos_por_defecto_Calculos['factor_ampacidad_cable_neutro']
         self.factor_error_Interruptor = self.datos_por_defecto_Calculos['factor_error_Interruptor']
     
+
     def calculo_Inominal(self, Sistema, lineas, numero_conductores_neutro, Carga, Voltaje, fp,factor_Inominal_fase_aplicado_neutro):
 
         control_factor_Inominal_fase_aplicado_neutro = False
@@ -57,7 +60,7 @@ class Calculos():
                 Inominal_fase = Carga/(sqrt(3)*Voltaje*fp)
                 Inominal_neutro = 0
 
-        if control_factor_Inominal_fase_aplicado_neutro == True and factor_Inominal_fase_aplicado_neutro < 1:
+        if control_factor_Inominal_fase_aplicado_neutro and factor_Inominal_fase_aplicado_neutro < 1:
             print("Se procedio a factor_Inominal_fase_aplicado_neutro = 1. Ya que Inominal_neutro = Inominal_fase y factor_Inominal_fase_aplicado_neutro < 1\n")
             factor_Inominal_fase_aplicado_neutro = 1
         
@@ -65,6 +68,7 @@ class Calculos():
 
         return Inominal_fase, Inominal_neutro, factor_Inominal_fase_aplicado_neutro
     
+
     def calculo_Icorregida_factor_ampacidad_cable(self, Inominal, factor_ampacidad_cable):
         '''Nota calculos.Calculos.calculo_Icorregida_factor_ampacidad_cable:\nLa ampacidad del cable se determino con un factor de 1.25,\npara cambiar este factor de ampacidad (corriente máxima) del cable, agregar a los datos, ejemplo:\ndatos_por_defecto_Calculos_dict = {{'factor_ampacidad_cable': 1.0}}\nclase = calculos.Calculos(datos_por_defecto_Calculos_dict)\nclase = elementos.Carga(datos_por_defecto_Calculos_dict)'''
 
@@ -72,17 +76,20 @@ class Calculos():
 
         return Icorregida_factor_ampacidad_cable
 
+
     def calculo_Carga_corregida_factor_utilizacion_carga(self, Carga, factor_utilizacion_carga):
 
         Carga_corregida_factor_utilizacion_carga = Carga*factor_utilizacion_carga
     
         return Carga_corregida_factor_utilizacion_carga
 
+
     def calculo_Carga_corregida_factor_simultaneidad_carga(self, Carga, factor_simultaneidad_carga):
 
         Carga_corregida_factor_simultaneidad_carga = Carga*factor_simultaneidad_carga
     
         return Carga_corregida_factor_simultaneidad_carga
+
 
     def calculo_conductores_activos_canalizacion(self, conductores_activos_adicionales_misma_canalizacion, misma_canalizacion, lineas, numero_conductores_por_fase, neutro_activo, numero_conductores_neutro, Inominal_fase, Inominal_neutro):
 
@@ -95,17 +102,18 @@ class Calculos():
                 print('Precaución: Inominal_fase >= Inominal_neutro\npero numero_conductores_por_fase diferente a numero_conductores_neutro')
                 print('Se precedio a numero_conductores_neutro = numero_conductores_por_fase\n')
                 numero_conductores_neutro = numero_conductores_por_fase
-            if neutro_activo == False:
+            if not neutro_activo:
                 print('Precaución: neutro_activo == False, pero Inominal_neutro >= Inominal_fase')
                 print('Se precedio a neutro_activo == True\n')
                 neutro_activo = True
 
-        if misma_canalizacion == True:
+        if misma_canalizacion:
             conductores_activos_canalizacion = lineas*numero_conductores_por_fase + int(neutro_activo)*numero_conductores_neutro + conductores_adicionales_totales
-        elif misma_canalizacion == False:
+        elif not misma_canalizacion:
             conductores_activos_canalizacion = lineas + int(neutro_activo)*ceil(numero_conductores_neutro/numero_conductores_por_fase) + conductores_adicionales_totales
 
         return conductores_activos_canalizacion, numero_conductores_por_fase, numero_conductores_neutro, neutro_activo
+
 
     def calculo_Interruptor(self, Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores, factor_Inominal_Interruptor):
         '''Interruptores = tablas.Tablas.Interruptores_tabla\nSe puede cambiar\nfactor_error_Interruptor = 0.01\nSe pude cambiar'''
@@ -135,11 +143,13 @@ class Calculos():
         
         return Interruptor, porcentaje_utilizacion_Interruptor
 
+
     def calculo_factor_temperatura(self, Tambiente_tabla_factor_temperatura, Taislante, Tambiente):
 
         factor_temperatura = sqrt((Taislante - Tambiente)/(Taislante - Tambiente_tabla_factor_temperatura))
 
         return factor_temperatura
+
 
     def calculo_factor_agrupamiento(self, tabla_factor_agrupamiento, Longitud, conductores_activos_canalizacion):
 
@@ -155,6 +165,7 @@ class Calculos():
                 factor_agrupamiento = 0
 
         return factor_agrupamiento
+
 
     def calculo_cable_ampacidad(self, calibres_tabla, Area_conductor_tabla, parte_adecuada_tabla_ampacidad_dict, Taislante, Tterminales, factor_agrupamiento, factor_temperatura, Interruptor, numero_conductores_por, Tambiente_tabla_factor_temperatura, Tambiente, Icorregida_factor_ampacidad_cable, factor_Inominal_Interruptor, palabra_control):
 
@@ -190,7 +201,7 @@ class Calculos():
                     elif Ampacidad_corregida >= Icorregida_factor_ampacidad_cable/numero_conductores_por:
                         condicion = True
 
-                if condicion == True:
+                if condicion:
 
                     if control_mensaje:
                         print(palabra_control)
@@ -208,7 +219,8 @@ class Calculos():
                 print('!ERROR. Tamano de conductor demasiado grande. Fuera de rango de las tablas.')
                 print('Se recomienda aumentar numero de conductores\n')
 
-                return
+                return None
+
 
     def calculo_cable_caida_de_tension(self, calibres_tabla, Area_conductor_tabla, resistencia_tabla, reactancia_tabla, caida_tension, Sistema, lineas, fp, Longitud, Inominal, Voltaje, numero_conductores_por_fase):
 
@@ -220,7 +232,7 @@ class Calculos():
                     print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
                     print('Se recomienda aumentar numero de conductores por fase\n')
 
-                    return
+                    return None
 
                 Ze = (resistencia_tabla[indice_caida]*fp + reactancia_tabla[indice_caida]*sin(acos(fp)))/1000
 
@@ -244,6 +256,7 @@ class Calculos():
                 print('!ERROR. Tamaño de conductor demasiado grande. Fuera de rango de las tablas.')
                 print('Se recomienda aumentar numero de conductores por fase\n')
 
+
     def calculo_cable_tierra_fisica(self, calibres_tabla, Area_tierra_tabla, interruptor_tierra_fisica_tabla, tierra_fisica_tabla, Interruptor, canalizacion, Area_caida, Area_ampacidad):
 
         for indice_tierra_fisica, interruptor_tierra_fisica in enumerate(interruptor_tierra_fisica_tabla):
@@ -252,6 +265,7 @@ class Calculos():
                 Area_tierra_fisica = Area_tierra_tabla[calibres_tabla.index(calibre_tierra_fisica)]
             
                 return indice_tierra_fisica, calibre_tierra_fisica, Area_tierra_fisica
+
 
     def calculo_cable_tierra_fisica_corregida(self, calibres_tabla, Area_conductor_tabla, Area_caida, Area_ampacidad, Area_tierra_fisica, tipo_circuito):
 
@@ -267,6 +281,7 @@ class Calculos():
                         calibre_tierra_fisica_corregida_caida = calibres_tabla[indice_tierra_fisica_corregida]
 
                         return factor_correccion_cable_tierra_fisica, Area_tierra_fisica_corregida_caida_ideal, indice_tierra_fisica_corregida, calibre_tierra_fisica_corregida_caida, Area_tierra_fisica_corregida_caida
+
 
     def calculo_eleccion_cable_ampacidad_VS_caida(self, indice_ampacidad, calibre_ampacidad, Area_ampacidad, indice_caida, calibre_caida, Area_caida, canalizacion, numero_conductores):
 
@@ -302,6 +317,7 @@ class Calculos():
 
         return indice_cable, calibre_cable, Area_cable
 
+
     def calculo_eleccion_cable_tierra_fisica(self, indice_tierra_fisica, calibre_tierra_fisica, Area_tierra_fisica, indice_tierra_fisica_corregida, calibre_tierra_fisica_corregida_caida, Area_tierra_fisica_corregida_caida, indice_cable_fase, calibre_cable_fase, Area_cable_fase, canalizacion, adicionar_tierra_fisica_aislada):
 
         if indice_tierra_fisica > indice_tierra_fisica_corregida:
@@ -324,7 +340,7 @@ class Calculos():
             calibre_tierra_fisica_final = '4'
             Area_tierra_fisica_final = 21.2
 
-        if adicionar_tierra_fisica_aislada == True:
+        if adicionar_tierra_fisica_aislada:
             indice_tierra_fisica_aislada = indice_tierra_fisica_final
             calibre_tierra_fisica_aislada = calibre_tierra_fisica_final
             Area_tierra_fisica_aislada = Area_tierra_fisica_final
@@ -355,12 +371,13 @@ class Calculos():
             calibre_tierra_fisica_final = calibre_cable_fase
             Area_tierra_fisica_final = Area_cable_fase
 
-            if adicionar_tierra_fisica_aislada == True:
+            if adicionar_tierra_fisica_aislada:
                 indice_tierra_fisica_aislada = indice_cable_fase
                 calibre_tierra_fisica_aislada = calibre_cable_fase
                 Area_tierra_fisica_aislada = Area_cable_fase
 
         return indice_tierra_fisica_final, calibre_tierra_fisica_final, Area_tierra_fisica_final, indice_tierra_fisica_aislada, calibre_tierra_fisica_aislada, Area_tierra_fisica_aislada
+
 
     def calculo_conductor_electrodo(self, numero_conductores_por_fase, Area_cable_fase, calibres_tabla, Area_conductor_tabla, tabla_conductor_entrada_dict, tabla_conductor_electrodo_lista):
 
@@ -392,6 +409,7 @@ class Calculos():
                 return indice_conductor_electrodo, calibre_conductor_electrodo, Area_conductor_electrodo
             
             indice_tabla_conductor_electrodo = indice_tabla_conductor_electrodo + 1
+
 
     def calculo_eleccion_cable_neutro(self, indice_cable_fase, calibre_cable_fase, Area_cable_fase, indice_ampacidad_neutro, calibre_ampacidad_neutro, Area_ampacidad_neutro, indice_tierra_fisica_final, calibre_tierra_fisica_final, Area_tierra_fisica_final, Inominal_fase, Inominal_neutro, factor_ampacidad_cable_neutro, tipo_circuito, numero_conductores_neutro):
 
@@ -437,14 +455,15 @@ class Calculos():
             else:
                 return False, False, False
 
+
     def calculo_conductores_circuito(self, lineas, numero_conductores_por_fase, calibre_cable_fase, numero_conductores_neutro, calibre_cable_neutro, calibre_tierra_fisica_final, adicionar_tierra_fisica_aislada, calibre_tierra_fisica_aislada, misma_canalizacion):
 
-        if misma_canalizacion == True:
+        if misma_canalizacion:
             numero_tierra_fisica_final = 1
         else:
             numero_tierra_fisica_final = numero_conductores_por_fase
 
-        if adicionar_tierra_fisica_aislada == True:
+        if adicionar_tierra_fisica_aislada:
             numero_tierra_fisica_aislada = 1
         else:
             numero_tierra_fisica_aislada = 0
@@ -465,30 +484,31 @@ class Calculos():
 
         return conductores_circuito
 
+
     def calculo_conductores_canalizacion(self, lineas, numero_conductores_por_fase, calibre_cable_fase, numero_conductores_neutro, calibre_cable_neutro, tierra_fisica_forrada, calibre_tierra_fisica_final, adicionar_tierra_fisica_aislada, calibre_tierra_fisica_aislada, misma_canalizacion, conductores_activos_adicionales_misma_canalizacion, conductores_no_activos_adicionales_misma_canalizacion):
 
         forrados = {'forrados': conductores_activos_adicionales_misma_canalizacion}
 
         desnudos = {'desnudos': conductores_no_activos_adicionales_misma_canalizacion}
 
-        if adicionar_tierra_fisica_aislada == True:
+        if adicionar_tierra_fisica_aislada:
             tierra_fisica_aislada = {'forrados': {calibre_tierra_fisica_aislada: 1}}
         else:
             tierra_fisica_aislada = {}
 
-        if tierra_fisica_forrada == True:
+        if tierra_fisica_forrada:
             tierra_fisica_final = {'forrados': {calibre_tierra_fisica_final: 1}}
         else:
             tierra_fisica_final = {'desnudos': {calibre_tierra_fisica_final: 1}}
 
-        if misma_canalizacion == True:
+        if misma_canalizacion:
             neutro = {'forrados': {calibre_cable_neutro: numero_conductores_neutro}}
-        elif misma_canalizacion == False:
+        elif not misma_canalizacion:
             neutro = {'forrados': {calibre_cable_neutro: ceil(numero_conductores_neutro/numero_conductores_por_fase)}}
 
-        if misma_canalizacion == True:
+        if misma_canalizacion:
             fase = {'forrados': {calibre_cable_fase: lineas*numero_conductores_por_fase}}
-        elif misma_canalizacion == False:
+        elif not misma_canalizacion:
             fase = {'forrados': {calibre_cable_fase: lineas}}
 
         lista_diccionarios = [forrados, desnudos, tierra_fisica_aislada, tierra_fisica_final, neutro, fase]
@@ -510,6 +530,7 @@ class Calculos():
                     conductores_canalizacion_totales[palabra].update({key: value})
 
         return conductores_canalizacion_totales
+
 
     def calculo_Area_conductores(self, conductores_canalizacion_totales, calibres_tabla, Area_conductor_tabla, tabla_dimensiones_cables_adecuada_lista):
         
@@ -536,6 +557,7 @@ class Calculos():
 
         return Area_conductores
 
+
     def calculo_conduit(self, Area_conductores, conductores_canalizacion_totales, tipo_conduit, dimensiones_tubo_conduit_tabla_4, porcentaje_llenado_conduit_tabla_1, conduit_pulg_forzado):
 
         for conductores, porcentaje in porcentaje_llenado_conduit_tabla_1.items():
@@ -543,7 +565,7 @@ class Calculos():
                 break
 
         control = False
-        if conduit_pulg_forzado != False:
+        if conduit_pulg_forzado != '0':
             indice_dimension_conduit = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_in'].index(conduit_pulg_forzado)
             dimension_conduit = dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit'][tipo_conduit][indice_dimension_conduit]
 
@@ -553,10 +575,10 @@ class Calculos():
                 medida_conduit_in = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_in'][indice_dimension_conduit]
                 medida_conduit_mm = dimensiones_tubo_conduit_tabla_4['datos']['medidas_estandar_mm'][indice_dimension_conduit]
                 control = True
-            if control == False:
+            if not control:
                 print(f'!ERROR. Se procedio a calcular otro tamaño de conduit, ya que porcentaje_llenado_conduit calculado = {porcentaje_llenado_conduit}% no cumple con porcentaje_llenado_conduit tabla = {porcentaje}%\n')
 
-        if control == False:
+        if not control:
             for indice_dimension_conduit, dimension_conduit in enumerate(dimensiones_tubo_conduit_tabla_4['datos']['tipo_conduit'][tipo_conduit]):
                 
                 Area_conduit = pi*((dimension_conduit/2)**2)
