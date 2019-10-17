@@ -1,14 +1,17 @@
 import datos
 import calculos
 import tablas
+import validacion
 
-class Carga(calculos.Calculos):
+class Carga(calculos.Calculos, validacion.Validacion):
 
 
     def __init__(self, datos_entrada, datos_por_defecto_Calculos_dict=None):
         super().__init__(datos_por_defecto_Calculos_dict)
 
         self.datos_entrada = datos_entrada
+
+        self.parametro_validacion_datos_entrada = self.validacion_datos_entrada(self.datos_entrada)
 
         self.Sistema = self.datos_entrada['Sistema']
         self.lineas = self.datos_entrada['lineas']
