@@ -67,7 +67,13 @@ class Calculos():
         return Inominal_fase, Inominal_neutro, factor_Inominal_fase_aplicado_neutro
     
     def calculo_Icorregida_factor_ampacidad_cable(self, Inominal, factor_ampacidad_cable):
-        '''Nota calculos.Calculos.calculo_Icorregida_factor_ampacidad_cable:\nLa ampacidad del cable se determino con un factor de 1.25,\npara cambiar este factor de ampacidad (corriente máxima) del cable, agregar a los datos, ejemplo:\ndatos_por_defecto_Calculos_dict = {{'factor_ampacidad_cable': 1.0}}\nclase = calculos.Calculos(datos_por_defecto_Calculos_dict)\nclase = elementos.Carga(datos_por_defecto_Calculos_dict)'''
+        '''Nota calculos.Calculos.calculo_Icorregida_factor_ampacidad_cable:
+        La ampacidad del cable se determino con un factor de 1.25,
+        para cambiar este factor de ampacidad (corriente máxima) del cable, agregar a los datos, ejemplo:
+        datos_por_defecto_Calculos_dict = {{'factor_ampacidad_cable': 1.0}}
+        clase = calculos.Calculos(datos_por_defecto_Calculos_dict)
+        clase = elementos.Carga(datos_por_defecto_Calculos_dict)
+        '''
 
         Icorregida_factor_ampacidad_cable = Inominal*factor_ampacidad_cable
 
@@ -109,7 +115,10 @@ class Calculos():
         return conductores_activos_canalizacion, numero_conductores_por_fase, numero_conductores_neutro, neutro_activo
 
     def calculo_Interruptor(self, Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores, factor_Inominal_Interruptor):
-        '''Interruptores = tablas.Tablas.Interruptores_tabla\nSe puede cambiar\nfactor_error_Interruptor = 0.01\nSe pude cambiar'''
+        '''Interruptores = tablas.Tablas.Interruptores_tabla
+        Se puede cambiar
+        factor_error_Interruptor = 0.01
+        '''
         
         def calculo_Interruptor_parte_iterativa(Inominal, Interruptor_forzado, factor_utilizacion_interruptor, Interruptores, factor_Inominal_Interruptor):
             for x, Interruptor in enumerate(Interruptores):
@@ -295,7 +304,18 @@ class Calculos():
             print('!ERROR. Tamaño de conductor menor a 1/0.')
             print(f'Conductor elegido: {calibre_cable}')
             print('***De forma automatica se procederá a seleccionar calibre 1/0***')
-            print('No se puede poner ese tamaño de conductor en paralelo.\n300-3. Conductores. b) Conductores del mismo circuito. 1) Instalaciones en paralelo. Se permitirá tender los conductores en paralelo de acuerdo con las disposiciones de 310-10(h) ... y los conductores de puesta a tierra del equipo deben cumplir con las disposiciones de 250-122. \n310-10. h) Conductores en paralelo. 1) Generalidades. Se permitirá que los conductores de aluminio, de aluminio recubierto de cobre o de cobre de tamaño 53.5 mm2 (1/0 AWG) y mayor, que sean los de fase, polaridad, neutro o el puesto a tierra del circuito estén conectados en paralelo (unidos eléctricamente en ambos extremos) cuando se instalen de acuerdo con (2) a (6) siguientes.\n')
+            print('No se puede poner ese tamaño de conductor en paralelo.',
+            '\n300-3. Conductores. b) Conductores del mismo circuito.',
+            '1) Instalaciones en paralelo. Se permitirá tender los conductores en paralelo',
+            'de acuerdo con las disposiciones de 310-10(h) ...',
+            'y los conductores de puesta a tierra del equipo',
+            'deben cumplir con las disposiciones de 250-122.',
+            '\n310-10. h) Conductores en paralelo. 1) Generalidades.',
+            'Se permitirá que los conductores de aluminio, de aluminio recubierto',
+            'de cobre o de cobre de tamaño 53.5 mm2 (1/0 AWG) y mayor,',
+            'que sean los de fase, polaridad, neutro o el puesto a tierra del circuito',
+            'estén conectados en paralelo (unidos eléctricamente en ambos extremos)',
+            'cuando se instalen de acuerdo con (2) a (6) siguientes.\n')
 
             indice_cable = 10
             calibre_cable = '1/0'

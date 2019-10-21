@@ -43,4 +43,6 @@ class Validacion():
         self.conductores_activos_adicionales_misma_canalizacion = self.datos_entrada['conductores_activos_adicionales_misma_canalizacion']
         self.conductores_no_activos_adicionales_misma_canalizacion = self.datos_entrada['conductores_no_activos_adicionales_misma_canalizacion']
 
+        return True
+
     
